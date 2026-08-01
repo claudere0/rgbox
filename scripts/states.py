@@ -30,10 +30,8 @@ class MenuState(State):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 self.game.change_state(StateID.LEVEL_SELECT)
-                print('LEVEL_SELECT')
             if event.key == pygame.K_s:
                 self.game.change_state(StateID.SETTINGS)
-                print('SETTINGS')
             if event.key == pygame.K_q:
                 self.game.running = False
 
@@ -43,6 +41,11 @@ class MenuState(State):
 # LEVEL_SELECT -> PLAYING or MENU
 
 class LevelSelectState(State):
+    def events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.game.change_state(StateID.MENU)
+
     def draw(self, screen):
         screen.fill(BLUE)
 
@@ -71,6 +74,12 @@ class LevelCompleteState(State):
         screen.fill(YELLOW)
 
 # SETTINGS -> go back to MENU/PAUSE
+
 class SettingsState(State):
+    def events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.game.change_state(StateID.MENU)
+
     def draw(self, screen):
         screen.fill(WHITE)
