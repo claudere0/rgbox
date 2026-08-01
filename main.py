@@ -9,6 +9,21 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        self.states = {
+            StateID.MENU: MenuState(self),
+            StateID.LEVEL_SELECT: LevelSelectState(self),
+            StateID.PLAYING: PlayingState(self),
+            StateID.PAUSE: PauseState(self),
+            StateID.GAME_OVER: GameOverState(self),
+            StateID.LEVEL_COMPLETE: LevelCompleteState(self),
+            StateID.SETTINGS: SettingsState(self),
+        }
+
+        self.current_state = self.states[StateID.MENU]
+
+    def change_state(self, state_id: StateID):
+        self.current_state = self.states[state_id]
+
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -17,12 +32,13 @@ class Game:
                 if event.key == pygame.K_q:
                     self.running = False
 
+            self.current_state.events(event)
+
     def update(self, dt):
-        pass
+        self.current_state.update(dt)
 
     def draw(self, screen):
-        screen.fill(BLACK)
-
+        self.current_state.draw(screen)
         pygame.display.flip()
 
     def run(self):
