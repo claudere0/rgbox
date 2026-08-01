@@ -1,5 +1,8 @@
-from .settings import *
 from enum import Enum, auto
+from pytmx.util_pygame import load_pygame
+from os.path import join
+from .settings import *
+from .level import Level
 
 class StateID(Enum):
     MENU = auto()
@@ -52,8 +55,14 @@ class LevelSelectState(State):
 # PLAYING -> PAUSE (ESCAPE) or GAME_OVER/LEVEL_COMPLETE
 
 class PlayingState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.tmx_maps = {0: load_pygame(join('data', 'levels', 'demo.tmx'))}
+        self.current_stage = Level(self.tmx_maps[0])
+
     def draw(self, screen):
         screen.fill(GREEN)
+        self.current_stage.run()
 
 # PAUSE -> PLAYING/SETTINGS/MENU
 
