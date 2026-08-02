@@ -18,7 +18,9 @@ class Level:
             if obj.name == 'box':
                 Player((obj.x, obj.y), (obj.width, obj.height), self.all_sprites)
 
+    def update(self, dt):
+        self.all_sprites.update(dt)
+
     def run(self):
-        self.all_sprites.update()
-        self.display_surface.fill(BLACK) 
+        self.display_surface.fill(BLACK)
         self.all_sprites.draw(self.display_surface)

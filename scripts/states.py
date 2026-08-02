@@ -60,6 +60,9 @@ class PlayingState(State):
         self.tmx_maps = {0: load_pygame(join('data', 'levels', 'demo.tmx'))}
         self.current_stage = Level(self.tmx_maps[0])
 
+    def update(self, dt):
+        self.current_stage.update(dt)
+
     def draw(self, screen):
         screen.fill(GREEN)
         self.current_stage.run()
