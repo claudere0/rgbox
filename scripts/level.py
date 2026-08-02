@@ -22,6 +22,7 @@ class Level:
     def update(self, dt):
         self.all_sprites.update(dt)
 
-    def run(self):
+    def run(self, dt):
         self.display_surface.fill(BLACK)
+        self.update(dt)
         self.all_sprites.draw(self.display_surface)
