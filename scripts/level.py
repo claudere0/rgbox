@@ -1,5 +1,6 @@
 from .settings import *
 from .sprites import Sprite
+from .player import Player
 
 class Level:
     def __init__(self, tmx_map):
@@ -15,8 +16,9 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
-                print(obj.x, obj.y)
+                Player((obj.x, obj.y), (obj.width, obj.height), self.all_sprites)
 
     def run(self):
+        self.all_sprites.update()
         self.display_surface.fill(BLACK) 
         self.all_sprites.draw(self.display_surface)
