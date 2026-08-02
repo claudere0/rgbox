@@ -8,10 +8,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
         self.collision_sprites = collision_check_group
+        self.on_surface = {'floor': False, 'left': False, 'right': False}
 
         self.direction = Vector2(0,0)
         self.speed = 300
         self.gravity = 2400
+        self.jump = False
+        self.jump_height = 1200
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -22,6 +25,9 @@ class Player(pygame.sprite.Sprite):
             input_vector.x -= 1
         self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
 
+        if keys[pygame.K_SPACE]:
+            self.jump = True
+
     def move(self, dt):
         self.rect.x += self.direction.x * self.speed * dt
         self.collision('horizontal')
@@ -31,13 +37,24 @@ class Player(pygame.sprite.Sprite):
         self.direction.y += self.gravity / 2 * dt
         self.collision('vertical')
 
+        if self.jump:
+            if self.on_surface['floor']:
+                self.direction.y = -self.jump_height
+            self.jump = False
+
+    def check_contact(self):
+        floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width,8))
+        collide_rects = [sprite.rect for sprite in self.collision_sprites]
+
+        self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 else False
+
     def collision(self, axis):
         for sprite in self.collision_sprites:
             if sprite.rect.colliderect(self.rect):
                 if axis == 'horizontal':
                     if self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right:
                         self.rect.left = sprite.rect.right
-                    if self.rect.right <= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left:
+                    if self.rect.right >= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left:
                         self.rect.right = sprite.rect.left
                 else:
                     if self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom:
@@ -50,3 +67,4 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
         self.input()
         self.move(dt)
+        self.check_contact()
