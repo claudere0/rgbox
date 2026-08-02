@@ -7,16 +7,17 @@ class Level:
         self.display_surface = pygame.display.get_surface()
 
         self.all_sprites = pygame.sprite.Group()
+        self.collision_sprites = pygame.sprite.Group()
 
         self.setup(tmx_map)
 
     def setup(self, tmx_map):
         for x, y, surf in tmx_map.get_layer_by_name('map').tiles():
-            Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites)
+            Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites)
 
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
-                Player((obj.x, obj.y), (obj.width, obj.height), self.all_sprites)
+                Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.all_sprites)
 
     def update(self, dt):
         self.all_sprites.update(dt)
