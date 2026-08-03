@@ -1,4 +1,5 @@
 from .settings import *
+from .timer import Timer
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_check_group, *groups):
@@ -16,16 +17,21 @@ class Player(pygame.sprite.Sprite):
         self.jump = False
         self.jump_height = 1050
 
-        self.display_surface = pygame.display.get_surface()
+        # self.display_surface = pygame.display.get_surface()
+        self.timers = {
+            'wall_jump': Timer(500),
+            'wall_jump_block': Timer(250),
+        }
 
     def input(self):
         keys = pygame.key.get_pressed()
         input_vector = Vector2(0,0)
-        if keys[pygame.K_RIGHT]:
-            input_vector.x += 1
-        if keys[pygame.K_LEFT]:
-            input_vector.x -= 1
-        self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
+        if not self.timers['wall_jump'].active:
+            if keys[pygame.K_RIGHT]:
+                input_vector.x += 1
+            if keys[pygame.K_LEFT]:
+                input_vector.x -= 1
+            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
 
         if keys[pygame.K_SPACE]:
             self.jump = True
@@ -34,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.direction.x * self.speed * dt
         self.collision('horizontal')
 
-        if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])):
+        if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not self.timers['wall_jump_block'].active:
             self.direction.y = 0
             self.rect.y += self.gravity / 16 * dt
         else:
@@ -47,7 +53,9 @@ class Player(pygame.sprite.Sprite):
         if self.jump:
             if self.on_surface['floor']:
                 self.direction.y = -self.jump_height
-            elif any((self.on_surface['left'], self.on_surface['right'])):
+                self.timers['wall_jump_block'].activate()
+            elif any((self.on_surface['left'], self.on_surface['right'])) and not self.timers['wall_jump_block'].active:
+                self.timers['wall_jump'].activate()
                 self.direction.y = -self.jump_height
                 self.direction.x = 1 if self.on_surface['left'] else -1
             self.jump = False
@@ -82,8 +90,13 @@ class Player(pygame.sprite.Sprite):
                         self.rect.bottom = sprite.rect.top
                     self.direction.y = 0
 
+    def update_timers(self):
+        for timer in self.timers.values():
+            timer.update()
+
     def update(self, dt):
         self.old_rect = self.rect.copy()
+        self.update_timers()
         self.input()
         self.move(dt)
         self.check_contact()
