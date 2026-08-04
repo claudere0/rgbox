@@ -1,12 +1,13 @@
 from .settings import *
 from .sprites import Sprite, MovingSprite
 from .player import Player
+from .groups import AllSprites
 
 class Level:
     def __init__(self, tmx_map):
         self.display_surface = pygame.display.get_surface()
 
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.semicollidable_sprites = pygame.sprite.Group()
 
@@ -18,7 +19,7 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
-                Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
+                self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
 
         for mov_obj in tmx_map.get_layer_by_name('moving_objects'):
             if mov_obj.name == 'moving_platform_0':
@@ -38,4 +39,4 @@ class Level:
     def run(self, dt):
         self.display_surface.fill(BLACK)
         self.update(dt)
-        self.all_sprites.draw(self.display_surface)
+        self.all_sprites.draw(self.player.rect.center)
