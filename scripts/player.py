@@ -9,7 +9,7 @@ class PlayerStateID(Enum):
     JUMP = auto()
     # WALL_JUMP = auto()
 
-class PLlayerState:
+class PlayerState:
     def __init__(self, player):
         self.player = player
 
@@ -22,6 +22,35 @@ class PLlayerState:
     def update(self, dt):
         return None
 
+class IdleState(PlayerState):
+    def __init__(self, player):
+        super().__init__(player)
+
+    def update(self):
+        if not self.player.on_surface['floor']:
+            return PlayerStateID.FALL
+
+        if self.player.direction.x != 0:
+            return PlayerStateID.RUN
+
+class RunState(PlayerState):
+    def update(self, dt):
+        self.player.rect.x += self.player.direction.x * self.player.speed * dt
+
+        if self.player.direction.x == 0:
+            return PlayerStateID.IDLE
+
+        if not self.player.on_surface['floor']:
+            return PlayerStateID.FALL
+
+class FallState(PlayerState):
+    def update(self, dt):
+        self.player.direction.y += self.player.gravity * dt
+        self.player.rect.y += self.player.direction.y * dt
+
+        if self.player.on_surface['floor']:
+            self.player.direction.y = 0
+            return PlayerStateID.IDLE
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_group_check, semicollidable_group_check, *groups):
@@ -48,6 +77,20 @@ class Player(pygame.sprite.Sprite):
             'wall_jump_block': Timer(250),
             'fall_platform': Timer(250),
         }
+
+        self.states = {
+            PlayerStateID.IDLE: IdleState(self),
+            PlayerStateID.RUN: RunState(self),
+            PlayerStateID.FALL: FallState(self),
+            # PlayerStateID.JUMP: JumpState(self),
+        }
+
+        self.current_state = self.states[PlayerStateID.IDLE]
+
+    def change_state(self, new_state_id):
+        if self.current_state != self.states[new_state_id]:
+            self.current_state = self.states[new_state_id]
+            self.current_state.enter()
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -149,8 +192,17 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.old_rect = self.rect.copy()
-        self.update_timers()
-        self.input()
+
+        keys = pygame.key.get_pressed()
+        self.current_state.handle_input(keys)
+
         self.platform_move(dt)
+
+        new_state_id = self.current_state.update(dt)
+        if new_state_id:
+            self.change_state(new_state_id)
+
+
+        self.update_timers()
         self.move(dt)
         self.check_contact()
