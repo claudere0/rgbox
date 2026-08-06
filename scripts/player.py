@@ -1,5 +1,27 @@
+from enum import Enum, auto
 from .settings import *
 from .timer import Timer
+
+class PlayerStateID(Enum):
+    IDLE = auto()
+    RUN = auto()
+    FALL = auto()
+    JUMP = auto()
+    # WALL_JUMP = auto()
+
+class PLlayerState:
+    def __init__(self, player):
+        self.player = player
+
+    def enter(self):
+        pass
+
+    def handle_input(self, keys):
+        pass
+
+    def update(self, dt):
+        return None
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_group_check, semicollidable_group_check, *groups):
