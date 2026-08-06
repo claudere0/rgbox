@@ -61,11 +61,11 @@ class PlayingState(State):
         self.current_stage = Level(self.tmx_maps[0])
 
     def update(self, dt):
-        self.current_stage.run(dt)
+        self.current_stage.update(dt)
 
     def draw(self, screen):
+        self.current_stage.draw(screen)
         # screen.fill(GREEN)
-        pass
 
 # PAUSE -> PLAYING/SETTINGS/MENU
 

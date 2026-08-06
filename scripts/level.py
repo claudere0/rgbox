@@ -10,11 +10,13 @@ class Level:
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.semicollidable_sprites = pygame.sprite.Group()
+        self.hazard_sprites = pygame.sprite.Group() # dead if collide
+        self.trigger_sprites = pygame.sprite.Group() # check for overlapping
 
         self.setup(tmx_map)
 
     def setup(self, tmx_map):
-        for x, y, surf in tmx_map.get_layer_by_name('map').tiles():
+        for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites)
 
         for obj in tmx_map.get_layer_by_name('objects'):
@@ -31,12 +33,11 @@ class Level:
                 start_pos = (mov_obj.x + mov_obj.width / 2, mov_obj.y)
                 end_pos = (mov_obj.x + mov_obj.width / 2, mov_obj.y + mov_obj.height)
             speed = 100
-            MovingSprite(start_pos, end_pos, move_dir, speed, self.all_sprites, self.semicollidable_sprites)
+            MovingSprite((192, 32), start_pos, end_pos, move_dir, speed, self.all_sprites, self.semicollidable_sprites)
 
     def update(self, dt):
         self.all_sprites.update(dt)
 
-    def run(self, dt):
-        self.display_surface.fill(BLACK)
-        self.update(dt)
+    def draw(self, screen):
+        screen.fill(BLACK)
         self.all_sprites.draw(self.player.rect.center)
