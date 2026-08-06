@@ -23,10 +23,22 @@ class PlayerState:
         return None
 
 class IdleState(PlayerState):
-    def __init__(self, player):
-        super().__init__(player)
+    def handle_input(self, keys):
+        input_vector = Vector2(0,0)
+        if keys[pygame.K_RIGHT]: input_vector.x += 1
+        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
-    def update(self):
+        if keys[pygame.K_SPACE] and self.player.on_surface['floor']:
+            self.player.jump = True
+
+    def update(self, dt):
+        if self.player.jump:
+            self.player.jump = False
+            self.player.direction.y = -self.player.jump_height
+            self.player.rect.bottom -= 8
+            return PlayerStateID.JUMP
+
         if not self.player.on_surface['floor']:
             return PlayerStateID.FALL
 
@@ -34,23 +46,65 @@ class IdleState(PlayerState):
             return PlayerStateID.RUN
 
 class RunState(PlayerState):
+    def handle_input(self, keys):
+        input_vector = Vector2(0,0)
+        if keys[pygame.K_RIGHT]: input_vector.x += 1
+        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        self.player.direction.x = input_vector.normalize().x if input_vector else 0
+
+        if keys[pygame.K_SPACE] and self.player.on_surface['floor']:
+            self.player.jump = True
+
     def update(self, dt):
         self.player.rect.x += self.player.direction.x * self.player.speed * dt
-
-        if self.player.direction.x == 0:
-            return PlayerStateID.IDLE
+        if self.player.jump:
+            self.player.jump = False
+            self.player.direction.y = -self.player.jump_height
+            self.player.rect.bottom -= 8
+            return PlayerStateID.JUMP
 
         if not self.player.on_surface['floor']:
             return PlayerStateID.FALL
 
+        if self.player.direction.x == 0:
+            return PlayerStateID.IDLE
+
 class FallState(PlayerState):
+    def handle_input(self, keys):
+        input_vector = Vector2(0,0)
+        if keys[pygame.K_RIGHT]: input_vector.x += 1
+        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        self.player.direction.x = input_vector.normalize().x if input_vector else 0
+
     def update(self, dt):
-        self.player.direction.y += self.player.gravity * dt
+        self.player.rect.x += self.player.direction.x * self.player.speed * dt
+        
+        self.player.direction.y += self.player.gravity / 2 * dt
         self.player.rect.y += self.player.direction.y * dt
+        self.player.direction.y += self.player.gravity / 2 * dt
 
         if self.player.on_surface['floor']:
             self.player.direction.y = 0
+            if self.player.direction.x != 0:
+                return PlayerStateID.RUN
             return PlayerStateID.IDLE
+
+class JumpState(PlayerState):
+    def handle_input(self, keys):
+        input_vector = Vector2(0,0)
+        if keys[pygame.K_RIGHT]: input_vector.x += 1
+        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        self.player.direction.x = input_vector.normalize().x if input_vector else 0
+
+    def update(self, dt):
+        self.player.rect.x += self.player.direction.x * self.player.speed * dt
+
+        self.player.direction.y += self.player.gravity / 2 * dt
+        self.player.rect.y += self.player.direction.y * dt
+        self.player.direction.y += self.player.gravity / 2 * dt
+
+        if self.player.direction.y >= 0:
+            return PlayerStateID.FALL
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_group_check, semicollidable_group_check, *groups):
@@ -82,7 +136,7 @@ class Player(pygame.sprite.Sprite):
             PlayerStateID.IDLE: IdleState(self),
             PlayerStateID.RUN: RunState(self),
             PlayerStateID.FALL: FallState(self),
-            # PlayerStateID.JUMP: JumpState(self),
+            PlayerStateID.JUMP: JumpState(self),
         }
 
         self.current_state = self.states[PlayerStateID.IDLE]
@@ -92,47 +146,29 @@ class Player(pygame.sprite.Sprite):
             self.current_state = self.states[new_state_id]
             self.current_state.enter()
 
-    def input(self):
+    def update(self, dt):
+        self.old_rect = self.rect.copy()
+
         keys = pygame.key.get_pressed()
-        input_vector = Vector2(0,0)
-        if not self.timers['wall_jump'].active:
-            if keys[pygame.K_RIGHT]:
-                input_vector.x += 1
-            if keys[pygame.K_LEFT]:
-                input_vector.x -= 1
-            if keys[pygame.K_DOWN]:
-                self.timers['fall_platform'].activate()
-            self.direction.x = input_vector.normalize().x if input_vector else input_vector.x
+        self.current_state.handle_input(keys)
 
-        if keys[pygame.K_SPACE]:
-            self.jump = True
+        self.platform_move(dt)
 
-    def move(self, dt):
-        self.rect.x += self.direction.x * self.speed * dt
+        new_state_id = self.current_state.update(dt)
+        if new_state_id:
+            self.change_state(new_state_id)
+
+
+        self.update_timers()
         self.collision('horizontal')
-
-        if not self.on_surface['floor'] and any((self.on_surface['left'], self.on_surface['right'])) and not self.timers['wall_jump_block'].active:
-            self.direction.y = 0
-            self.rect.y += self.gravity / 16 * dt
-        else:
-            self.direction.y += self.gravity / 2 * dt
-            self.rect.y += self.direction.y * dt
-            self.direction.y += self.gravity / 2 * dt
-
         self.collision('vertical')
+        self.check_contact()
 
-        if self.jump:
-            if self.on_surface['floor']:
-                self.direction.y = -self.jump_height
-                self.timers['wall_jump_block'].activate()
-                self.rect.bottom -= 8
-            elif any((self.on_surface['left'], self.on_surface['right'])) and not self.timers['wall_jump_block'].active:
-                self.timers['wall_jump'].activate()
-                self.direction.y = -self.jump_height
-                self.direction.x = 1 if self.on_surface['left'] else -1
-            self.jump = False
+        print(self.current_state)
 
-        self.semi_collision()
+    def update_timers(self):
+        for timer in self.timers.values():
+            timer.update()
 
     def platform_move(self, dt):
         if self.platform:
@@ -185,24 +221,3 @@ class Player(pygame.sprite.Sprite):
                         self.rect.bottom = sprite.rect.top
                         if self.direction.y > 0:
                             self.direction.y = 0
-
-    def update_timers(self):
-        for timer in self.timers.values():
-            timer.update()
-
-    def update(self, dt):
-        self.old_rect = self.rect.copy()
-
-        keys = pygame.key.get_pressed()
-        self.current_state.handle_input(keys)
-
-        self.platform_move(dt)
-
-        new_state_id = self.current_state.update(dt)
-        if new_state_id:
-            self.change_state(new_state_id)
-
-
-        self.update_timers()
-        self.move(dt)
-        self.check_contact()
