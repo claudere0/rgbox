@@ -36,7 +36,7 @@ class IdleState(PlayerState):
         if self.player.jump:
             self.player.jump = False
             self.player.direction.y = -self.player.jump_height
-            self.player.rect.bottom -= 8
+            self.player.rect.bottom -= 1
             return PlayerStateID.JUMP
 
         if not self.player.on_surface['floor']:
@@ -56,11 +56,10 @@ class RunState(PlayerState):
             self.player.jump = True
 
     def update(self, dt):
-        self.player.rect.x += self.player.direction.x * self.player.speed * dt
         if self.player.jump:
             self.player.jump = False
             self.player.direction.y = -self.player.jump_height
-            self.player.rect.bottom -= 8
+            self.player.rect.bottom -= 1
             return PlayerStateID.JUMP
 
         if not self.player.on_surface['floor']:
@@ -77,11 +76,7 @@ class FallState(PlayerState):
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
     def update(self, dt):
-        self.player.rect.x += self.player.direction.x * self.player.speed * dt
-        
-        self.player.direction.y += self.player.gravity / 2 * dt
-        self.player.rect.y += self.player.direction.y * dt
-        self.player.direction.y += self.player.gravity / 2 * dt
+        self.player.direction.y += self.player.gravity * dt
 
         if self.player.on_surface['floor']:
             self.player.direction.y = 0
@@ -97,11 +92,7 @@ class JumpState(PlayerState):
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
     def update(self, dt):
-        self.player.rect.x += self.player.direction.x * self.player.speed * dt
-
-        self.player.direction.y += self.player.gravity / 2 * dt
-        self.player.rect.y += self.player.direction.y * dt
-        self.player.direction.y += self.player.gravity / 2 * dt
+        self.player.direction.y += self.player.gravity* dt
 
         if self.player.direction.y >= 0:
             return PlayerStateID.FALL
@@ -155,9 +146,12 @@ class Player(pygame.sprite.Sprite):
         if new_state_id:
             self.change_state(new_state_id)
 
-        self.update_timers()
+        self.rect.x += self.direction.x * self.speed * dt
         self.collision('horizontal')
+        self.rect.y += self.direction.y * dt
         self.collision('vertical')
+
+        self.update_timers()
         self.check_contact()
 
         print(self.current_state)
@@ -168,8 +162,8 @@ class Player(pygame.sprite.Sprite):
 
     def check_contact(self):
         floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width,8))
-        right_rect = pygame.Rect(self.rect.topright + Vector2(0, self.rect.height / 4), (8, self.rect.height / 2))
-        left_rect = pygame.Rect(self.rect.topleft + Vector2(-8, self.rect.height / 4), (8, self.rect.height / 2))
+        right_rect = pygame.Rect(self.rect.topright + Vector2(0, self.rect.height / 8), (8, self.rect.height / 2))
+        left_rect = pygame.Rect(self.rect.topleft + Vector2(-1, self.rect.height / 8), (8, self.rect.height / 2))
         collide_rects = [sprite.rect for sprite in self.collision_sprites]
         semi_collide_rects = [sprite.rect for sprite in self.semi_collision_sprites]
 
@@ -186,10 +180,16 @@ class Player(pygame.sprite.Sprite):
         for sprite in self.collision_sprites:
             if sprite.rect.colliderect(self.rect):
                 if axis == 'horizontal':
-                    if self.rect.left <= sprite.rect.right and int(self.old_rect.left) >= int(sprite.old_rect.right):
+                    if self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right - 1:
                         self.rect.left = sprite.rect.right
-                    if self.rect.right >= sprite.rect.left and int(self.old_rect.right) <= int(sprite.old_rect.left):
+                    if self.rect.right >= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left + 1:
                         self.rect.right = sprite.rect.left
+                else:
+                    if self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom - 1:
+                        self.rect.top = sprite.rect.bottom
+                    if self.rect.bottom >= sprite.rect.top and self.old_rect.bottom <= sprite.old_rect.top + 1:
+                        self.rect.bottom = sprite.rect.top
+                    self.direction.y = 0
 
     # def semi_collision(self):
     #     if not self.timers['fall_platform'].active:
