@@ -7,7 +7,7 @@ class PlayerStateID(Enum):
     RUN = auto()
     FALL = auto()
     JUMP = auto()
-    # WALL_JUMP = auto()
+    WALL_SLIDE = auto()
 
 class PlayerState:
     def __init__(self, player):
@@ -70,12 +70,17 @@ class RunState(PlayerState):
 
 class FallState(PlayerState):
     def handle_input(self, keys):
-        input_vector = Vector2(0,0)
-        if keys[pygame.K_RIGHT]: input_vector.x += 1
-        if keys[pygame.K_LEFT]: input_vector.x -= 1
-        self.player.direction.x = input_vector.normalize().x if input_vector else 0
+        if not self.player.timers['wall_jump_block'].active:
+            input_vector = Vector2(0,0)
+            if keys[pygame.K_RIGHT]: input_vector.x += 1
+            if keys[pygame.K_LEFT]: input_vector.x -= 1
+            self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
     def update(self, dt):
+        if (self.player.on_surface['left'] and self.player.direction.x < 0) or \
+           (self.player.on_surface['right'] and self.player.direction.x > 0):
+            return PlayerStateID.WALL_SLIDE
+
         self.player.direction.y += self.player.gravity * dt
 
         if self.player.on_surface['floor']:
@@ -86,22 +91,63 @@ class FallState(PlayerState):
 
 class JumpState(PlayerState):
     def handle_input(self, keys):
-        input_vector = Vector2(0,0)
-        if keys[pygame.K_RIGHT]: input_vector.x += 1
-        if keys[pygame.K_LEFT]: input_vector.x -= 1
-        self.player.direction.x = input_vector.normalize().x if input_vector else 0
+        if not self.player.timers['wall_jump_block'].active:
+            input_vector = Vector2(0,0)
+            if keys[pygame.K_RIGHT]: input_vector.x += 1
+            if keys[pygame.K_LEFT]: input_vector.x -= 1
+            self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
     def update(self, dt):
+        if (self.player.on_surface['left'] and self.player.direction.x < 0) or \
+           (self.player.on_surface['right'] and self.player.direction.x > 0):
+            return PlayerStateID.WALL_SLIDE
+
         self.player.direction.y += self.player.gravity* dt
 
         if self.player.direction.y >= 0:
             return PlayerStateID.FALL
 
+class WallSlideState(PlayerState):
+    def handle_input(self, keys):
+        input_vector = Vector2(0,0)
+        if keys[pygame.K_RIGHT]: input_vector.x += 1
+        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        self.player.direction.x = input_vector.normalize().x if input_vector else 0
+        if keys[pygame.K_SPACE]:
+            self.player.jump = True
+
+    def update(self, dt):
+        if self.player.jump:
+            self.player.jump = False
+
+            self.player.direction.y = -self.player.jump_height
+
+            self.player.direction.x = 1 if self.player.on_surface['left'] else -1
+
+            self.player.direction.x = 1 if self.player.on_surface['left'] else -1
+
+            return PlayerStateID.JUMP
+
+        self.player.direction.y = 150
+
+        if self.player.on_surface['floor']:
+            return PlayerStateID.IDLE
+
+        if self.player.on_surface['left'] and self.player.direction.x >= 0:
+            return PlayerStateID.FALL
+
+        if self.player.on_surface['right'] and self.player.direction.x <= 0:
+            return PlayerStateID.FALL
+
+        if not self.player.on_surface['left'] and not self.player.on_surface['right']:
+            return PlayerStateID.FALL
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_group_check, semicollidable_group_check, *groups):
         super().__init__(*groups)
         self.image = pygame.Surface(surf)
-        self.image.fill(RED)
+        self.image.fill(WHITE)
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
 
@@ -127,6 +173,7 @@ class Player(pygame.sprite.Sprite):
             PlayerStateID.RUN: RunState(self),
             PlayerStateID.FALL: FallState(self),
             PlayerStateID.JUMP: JumpState(self),
+            PlayerStateID.WALL_SLIDE: WallSlideState(self),
         }
 
         self.current_state = self.states[PlayerStateID.IDLE]
