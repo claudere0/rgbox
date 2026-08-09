@@ -49,6 +49,7 @@ class IdleState(PlayerState):
             return PlayerStateID.JUMP
 
         if not self.player.on_surface['floor']:
+            self.player.timers['coyote'].activate()
             return PlayerStateID.FALL
 
         if self.player.direction.x != 0:
@@ -80,6 +81,7 @@ class RunState(PlayerState):
             return PlayerStateID.JUMP
 
         if not self.player.on_surface['floor']:
+            self.player.timers['coyote'].activate()
             return PlayerStateID.FALL
 
         if self.player.direction.x == 0:
@@ -93,9 +95,14 @@ class FallState(PlayerState):
             if keys[pygame.K_LEFT]: input_vector.x -= 1
             self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
-        if just_pressed[pygame.K_SPACE] and self.player.can_double_jump:
-            self.player.can_double_jump = False
-            self.player.jump = True
+        if just_pressed[pygame.K_SPACE]:
+            if self.player.timers['coyote'].active:
+                self.player.timers['coyote'].deactivate()
+                self.player.jump = True
+
+            elif self.player.can_double_jump:
+                self.player.can_double_jump = False
+                self.player.jump = True
 
         if just_pressed[pygame.K_LSHIFT] and self.player.can_dash and not self.player.timers['dash_cooldown'].active:
             self.player.can_dash = False
@@ -248,6 +255,7 @@ class Player(pygame.sprite.Sprite):
             'wall_jump_block': Timer(250),
             'dash': Timer(250),
             'dash_cooldown': Timer(250),
+            'coyote': Timer(125),
         }
 
         self.states = {
