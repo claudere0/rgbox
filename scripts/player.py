@@ -16,20 +16,20 @@ class PlayerState:
     def enter(self):
         pass
 
-    def handle_input(self, keys):
+    def handle_input(self, keys, just_pressed):
         pass
 
     def update(self, dt):
         return None
 
 class IdleState(PlayerState):
-    def handle_input(self, keys):
+    def handle_input(self, keys, just_pressed):
         input_vector = Vector2(0,0)
         if keys[pygame.K_RIGHT]: input_vector.x += 1
         if keys[pygame.K_LEFT]: input_vector.x -= 1
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
-        if keys[pygame.K_SPACE] and self.player.on_surface['floor']:
+        if just_pressed[pygame.K_SPACE] and self.player.on_surface['floor']:
             self.player.jump = True
 
     def update(self, dt):
@@ -46,13 +46,13 @@ class IdleState(PlayerState):
             return PlayerStateID.RUN
 
 class RunState(PlayerState):
-    def handle_input(self, keys):
+    def handle_input(self, keys, just_pressed):
         input_vector = Vector2(0,0)
         if keys[pygame.K_RIGHT]: input_vector.x += 1
         if keys[pygame.K_LEFT]: input_vector.x -= 1
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
-        if keys[pygame.K_SPACE] and self.player.on_surface['floor']:
+        if just_pressed[pygame.K_SPACE] and self.player.on_surface['floor']:
             self.player.jump = True
 
     def update(self, dt):
@@ -69,14 +69,24 @@ class RunState(PlayerState):
             return PlayerStateID.IDLE
 
 class FallState(PlayerState):
-    def handle_input(self, keys):
+    def handle_input(self, keys, just_pressed):
         if not self.player.timers['wall_jump_block'].active:
             input_vector = Vector2(0,0)
             if keys[pygame.K_RIGHT]: input_vector.x += 1
             if keys[pygame.K_LEFT]: input_vector.x -= 1
             self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
+        if just_pressed[pygame.K_SPACE] and self.player.can_double_jump:
+            self.player.can_double_jump = False
+            self.player.jump = True
+
     def update(self, dt):
+        if self.player.jump:
+            self.player.jump = False
+            self.player.direction.y = -self.player.jump_height
+
+            return PlayerStateID.JUMP
+
         if (self.player.on_surface['left'] and self.player.direction.x < 0) or \
            (self.player.on_surface['right'] and self.player.direction.x > 0):
             return PlayerStateID.WALL_SLIDE
@@ -90,14 +100,24 @@ class FallState(PlayerState):
             return PlayerStateID.IDLE
 
 class JumpState(PlayerState):
-    def handle_input(self, keys):
+    def handle_input(self, keys, just_pressed):
         if not self.player.timers['wall_jump_block'].active:
             input_vector = Vector2(0,0)
             if keys[pygame.K_RIGHT]: input_vector.x += 1
             if keys[pygame.K_LEFT]: input_vector.x -= 1
             self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
+        if just_pressed[pygame.K_SPACE] and self.player.can_double_jump:
+            self.player.can_double_jump = False
+            self.player.jump = True
+
     def update(self, dt):
+        if self.player.jump:
+            self.player.jump = False
+            self.player.direction.y = -self.player.jump_height
+
+            return PlayerStateID.JUMP
+
         if (self.player.on_surface['left'] and self.player.direction.x < 0) or \
            (self.player.on_surface['right'] and self.player.direction.x > 0):
             return PlayerStateID.WALL_SLIDE
@@ -108,12 +128,12 @@ class JumpState(PlayerState):
             return PlayerStateID.FALL
 
 class WallSlideState(PlayerState):
-    def handle_input(self, keys):
+    def handle_input(self, keys, just_pressed):
         input_vector = Vector2(0,0)
         if keys[pygame.K_RIGHT]: input_vector.x += 1
         if keys[pygame.K_LEFT]: input_vector.x -= 1
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
-        if keys[pygame.K_SPACE]:
+        if just_pressed[pygame.K_SPACE]:
             self.player.jump = True
 
     def update(self, dt):
@@ -124,7 +144,7 @@ class WallSlideState(PlayerState):
 
             self.player.direction.x = 1 if self.player.on_surface['left'] else -1
 
-            self.player.direction.x = 1 if self.player.on_surface['left'] else -1
+            self.player.timers['wall_jump_block'].activate()
 
             return PlayerStateID.JUMP
 
@@ -156,6 +176,7 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 2400
         self.jump = False
         self.jump_height = 1125
+        self.can_double_jump = False
 
         self.collision_sprites = collision_group_check
         self.semi_collision_sprites = semicollidable_group_check
@@ -187,7 +208,9 @@ class Player(pygame.sprite.Sprite):
         self.old_rect = self.rect.copy()
 
         keys = pygame.key.get_pressed()
-        self.current_state.handle_input(keys)
+        just_pressed = pygame.key.get_just_pressed()
+
+        self.current_state.handle_input(keys, just_pressed)
 
         new_state_id = self.current_state.update(dt)
         if new_state_id:
@@ -222,6 +245,9 @@ class Player(pygame.sprite.Sprite):
         self.on_surface['right'] = True if right_rect.collidelist(collide_rects) >= 0 else False
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
         # print(self.on_surface)
+
+        if self.on_surface['floor'] or self.on_surface['left'] or self.on_surface['right']:
+            self.can_double_jump = True
 
     def collision(self, axis):
         for sprite in self.collision_sprites:
