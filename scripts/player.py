@@ -129,7 +129,6 @@ class Player(pygame.sprite.Sprite):
         self.timers = {
             'wall_jump': Timer(500),
             'wall_jump_block': Timer(250),
-            'fall_platform': Timer(250),
         }
 
         self.states = {
@@ -152,12 +151,9 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         self.current_state.handle_input(keys)
 
-        self.platform_move(dt)
-
         new_state_id = self.current_state.update(dt)
         if new_state_id:
             self.change_state(new_state_id)
-
 
         self.update_timers()
         self.collision('horizontal')
@@ -169,10 +165,6 @@ class Player(pygame.sprite.Sprite):
     def update_timers(self):
         for timer in self.timers.values():
             timer.update()
-
-    def platform_move(self, dt):
-        if self.platform:
-            self.rect.topleft += self.platform.direction * self.platform.speed * dt
 
     def check_contact(self):
         floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width,8))
@@ -190,12 +182,6 @@ class Player(pygame.sprite.Sprite):
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
         # print(self.on_surface)
 
-        self.platform = None
-        sprites = self.collision_sprites.sprites() + self.semi_collision_sprites.sprites()
-        for sprite in [sprite for sprite in sprites if hasattr(sprite, 'moving')]:
-            if sprite.rect.colliderect(floor_rect):
-                self.platform = sprite
-
     def collision(self, axis):
         for sprite in self.collision_sprites:
             if sprite.rect.colliderect(self.rect):
@@ -204,20 +190,12 @@ class Player(pygame.sprite.Sprite):
                         self.rect.left = sprite.rect.right
                     if self.rect.right >= sprite.rect.left and int(self.old_rect.right) <= int(sprite.old_rect.left):
                         self.rect.right = sprite.rect.left
-                else:
-                    if self.rect.top <= sprite.rect.bottom and int(self.old_rect.top) >= int(sprite.old_rect.bottom):
-                        self.rect.top = sprite.rect.bottom
-                        if hasattr(sprite, 'moving'):
-                            self.rect.top += 8
-                    if self.rect.bottom >= sprite.rect.top and int(self.old_rect.bottom) <= int(sprite.old_rect.top):
-                        self.rect.bottom = sprite.rect.top
-                    self.direction.y = 0
 
-    def semi_collision(self):
-        if not self.timers['fall_platform'].active:
-            for sprite in self.semi_collision_sprites:
-                if sprite.rect.colliderect(self.rect):
-                    if self.rect.bottom >= sprite.rect.top and int(self.old_rect.bottom) <= int(sprite.old_rect.top):
-                        self.rect.bottom = sprite.rect.top
-                        if self.direction.y > 0:
-                            self.direction.y = 0
+    # def semi_collision(self):
+    #     if not self.timers['fall_platform'].active:
+    #         for sprite in self.semi_collision_sprites:
+    #             if sprite.rect.colliderect(self.rect):
+    #                 if self.rect.bottom >= sprite.rect.top and int(self.old_rect.bottom) <= int(sprite.old_rect.top):
+    #                     self.rect.bottom = sprite.rect.top
+    #                     if self.direction.y > 0:
+    #                         self.direction.y = 0

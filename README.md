@@ -30,13 +30,13 @@
   * *Squash & Stretch:* No.
 ## 4. Abilities & Mechanics
 *Abilities are combined through additive color mixing.*
-* 🔴 **Red:** `Wall Jump`.
-* 🟢 **Green:** `Dash` (Quick horizontal burst).
-* 🔵 **Blue:** `Double Jump` (Mid-air jump).
-* 🟡 **Yellow (Red + Green):** Wall Jump + Dash.
-* 🩵 **Cyan (Green + Blue):** Dash + Double Jump.
-* 🟣 **Magenta (Red + Blue):** Wall Jump + Double Jump.
-* ⚪ **White (Red + Green + Blue):** Wall Jump + Dash + Double Jump (Final Form).
+* **Red:** `Wall Jump`.
+* **Green:** `Dash` (Quick horizontal burst).
+* **Blue:** `Double Jump` (Mid-air jump).
+* **Yellow (Red + Green):** Wall Jump + Dash.
+* **Cyan (Green + Blue):** Dash + Double Jump.
+* **Magenta (Red + Blue):** Wall Jump + Double Jump.
+* **White (Red + Green + Blue):** Wall Jump + Dash + Double Jump (Final Form).
 ## 5. Map Elements & Tiled Layers
 *Levels will be designed using the Tiled editor (.tmx format).*
 * **Terrain:** Solid blocks (Walls, floor, ceiling). Blocks player movement.
@@ -45,3 +45,9 @@
 * **Exit Door (Trigger):** The zone that transitions the player to the next level.
 ## 6. HUD / UI
 * To be designed later in the development process.
+## Color System (RGB) and Size Architecture
+In **RGBox**, the mechanics of changing character color and size are the core of gameplay. To avoid physics errors and keep the code clean, the system is divided into three logical blocks: Data, Triggers, and Physics.
+### 1. Color Storage and Mixing (Data)
+The player's current color is stored in a video dictionary, which represents the unusual RGB color model:
+``` Python
+self.colors = {'R': 255, 'G': 0, 'B': 0} # Player starts: Red
