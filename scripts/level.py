@@ -28,7 +28,45 @@ class Level:
 
 
     def update(self, dt):
+        if any(self.player.pigments.values()):
+            self.bg_color = BLACK
+        else:
+            self.bg_color = WHITE
+
         self.all_sprites.update(dt)
+        self.update_colors(dt)
+
+    def update_colors(self, dt):
+        just_pressed = pygame.key.get_just_pressed()
+        if just_pressed[pygame.K_e]:
+            for station in self.trigger_sprites:
+                if self.player.rect.move(0, 16).colliderect(station.rect):
+
+                    dx = self.player.rect.centerx - station.rect.left
+                    slot_width = station.rect.width / 3
+                    
+                    if dx < slot_width:
+                        color_key = 'R'
+                    elif dx < slot_width * 2:
+                        color_key = 'G'
+                    else:
+                        color_key = 'B'
+
+                    if not self.player.pigments[color_key] and station.station_colors[color_key]:
+                        self.player.pigments[color_key] = True
+                        station.station_colors[color_key] = False
+
+                        self.player.jump = True
+                        self.player.update_color_and_size()
+                        station.draw_station()
+
+                    elif self.player.pigments[color_key] and not station.station_colors[color_key]:
+                        self.player.pigments[color_key] = False
+                        station.station_colors[color_key] = True
+                        
+                        self.player.jump = True
+                        self.player.update_color_and_size()
+                        station.draw_station()
 
     def draw(self, screen):
         screen.fill(self.bg_color)
