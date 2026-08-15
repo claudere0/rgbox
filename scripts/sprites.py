@@ -46,3 +46,28 @@ class MovingSprite(Sprite):
         self.old_rect = self.rect.copy()
         self.rect.topleft += self.direction * self.speed * dt
         self.check_border()
+
+class ColorStation(Sprite):
+    def __init__(self, pos, size, properties, *groups):
+        surf = pygame.Surface(size)
+        super().__init__(pos, surf, *groups)
+
+        self.station_colors = {
+                'R': properties.get('has_red', False),
+                'G': properties.get('has_green', False),
+                'B': properties.get('has_blue', False)
+        }
+
+        self.draw_station()
+
+    def draw_station(self):
+        self.image.fill(BLACK)
+        slot_width = self.rect.width / 3 
+
+        if self.station_colors['R']:
+            pygame.draw.rect(self.image, (255, 0, 0), (0, 0, slot_width, self.rect.height))
+        if self.station_colors['G']:
+            pygame.draw.rect(self.image, (0, 255, 0), (slot_width, 0, slot_width, self.rect.height))
+        if self.station_colors['B']:
+            pygame.draw.rect(self.image, (0, 0, 255), (slot_width * 2, 0, slot_width, self.rect.height))
+

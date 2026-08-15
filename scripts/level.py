@@ -1,5 +1,5 @@
 from .settings import *
-from .sprites import Sprite, MovingSprite
+from .sprites import Sprite, ColorStation
 from .player import Player
 from .groups import AllSprites
 
@@ -23,6 +23,9 @@ class Level:
             if obj.name == 'box':
                 self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
                 self.bg_color = WHITE if not any(self.player.pigments.values()) else BLACK
+            elif obj.name == 'color_station':
+                ColorStation((obj.x, obj.y), (obj.width, obj.height), obj.properties, self.trigger_sprites, self.all_sprites, self.collision_sprites)
+
 
     def update(self, dt):
         self.all_sprites.update(dt)
