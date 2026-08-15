@@ -2,6 +2,7 @@ from .settings import *
 from .sprites import Sprite, ColorStation
 from .player import Player
 from .groups import AllSprites
+from os.path import join
 
 class Level:
     def __init__(self, tmx_map):
@@ -9,6 +10,7 @@ class Level:
 
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
+        self.terrain_sprites = pygame.sprite.Group()
         self.semicollidable_sprites = pygame.sprite.Group()
         self.hazard_sprites = pygame.sprite.Group() # dead if collide
         self.trigger_sprites = pygame.sprite.Group() # check for overlapping
@@ -16,8 +18,17 @@ class Level:
         self.setup(tmx_map)
 
     def setup(self, tmx_map):
+        tileset_img = pygame.image.load(join('graphics', 'tilesets', 'demo_tiles.png')).convert_alpha()
+
+        self.black_tile_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+        self.black_tile_image.blit(tileset_img, (0, 0), (0, 0, TILE_SIZE, TILE_SIZE))
+
+        self.white_tile_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+        self.white_tile_image.blit(tileset_img, (0, 0), (7 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE))
+
+
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
-            Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites)
+            Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
@@ -28,11 +39,6 @@ class Level:
 
 
     def update(self, dt):
-        if any(self.player.pigments.values()):
-            self.bg_color = BLACK
-        else:
-            self.bg_color = WHITE
-
         self.all_sprites.update(dt)
         self.update_colors(dt)
 
@@ -69,5 +75,17 @@ class Level:
                         station.draw_station()
 
     def draw(self, screen):
-        screen.fill(self.bg_color)
+        has_colors = any(self.player.pigments.values())
+        if has_colors:
+            bg_color = BLACK
+            target_texture = self.white_tile_image
+        else:
+            bg_color = WHITE
+            target_texture = self.black_tile_image
+
+        screen.fill(bg_color)
+
+        for tile in self.terrain_sprites:
+            tile.image = target_texture
+
         self.all_sprites.draw(self.player.rect.center)
