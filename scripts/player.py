@@ -243,7 +243,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_height = 1012
         self.fall_gravity_modifier = 2
         self.slide_gravity_modifier = 0.125
-        self.max_fall_speed = 2560
+        self.max_fall_speed = 1600 # I wanted it to be 2560 means 48 px per second but it can cause a bugs cause my little paltforms has thickness of 32 i need less than 32 * 60 means less than 1920 (3/4 of 2560) and I choose 1600 (5/8 of 2560)
         self.can_double_jump = False
         self.can_dash = True
         self.facing = 1
@@ -263,6 +263,8 @@ class Player(pygame.sprite.Sprite):
             'coyote': Timer(125),
         }
 
+        self.pigments = {'R': False, 'G': False, 'B': False}
+
         self.states = {
             PlayerStateID.IDLE: IdleState(self),
             PlayerStateID.RUN: RunState(self),
@@ -273,6 +275,7 @@ class Player(pygame.sprite.Sprite):
         }
 
         self.current_state = self.states[PlayerStateID.IDLE]
+        self.update_color_and_size()
 
     def change_state(self, new_state_id):
         if self.current_state != self.states[new_state_id]:
@@ -326,6 +329,24 @@ class Player(pygame.sprite.Sprite):
         if self.on_surface['floor'] or self.on_surface['left'] or self.on_surface['right']:
             self.can_double_jump = True
             self.can_dash = True
+
+    def update_color_and_size(self):
+        count = sum(self.pigments.values())
+
+        color = (
+            255 if self.pigments['R'] else 0,
+            255 if self.pigments['G'] else 0,
+            255 if self.pigments['B'] else 0
+        )
+
+        new_size = (5 + 2 * count) * UNIT # UNIT = 8
+
+        old_center = self.rect.center
+        self.image = pygame.Surface((new_size, new_size))
+        self.image.fill(color)
+
+        self.rect = self.image.get_frect()
+        self.rect.center = old_center
 
     def collision(self, axis):
         for sprite in self.collision_sprites:

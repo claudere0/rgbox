@@ -22,10 +22,11 @@ class Level:
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
                 self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
+                self.bg_color = WHITE if not any(self.player.pigments.values()) else BLACK
 
     def update(self, dt):
         self.all_sprites.update(dt)
 
     def draw(self, screen):
-        screen.fill(BLACK)
+        screen.fill(self.bg_color)
         self.all_sprites.draw(self.player.rect.center)
