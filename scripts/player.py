@@ -123,7 +123,8 @@ class FallState(PlayerState):
            (self.player.on_surface['right'] and self.player.direction.x > 0):
             return PlayerStateID.WALL_SLIDE
 
-        self.player.direction.y += self.player.gravity * dt
+        self.player.direction.y += self.player.gravity * dt * self.player.fall_gravity_modifier
+        self.player.direction.y = min(self.player.direction.y, self.player.max_fall_speed)
 
         if self.player.on_surface['floor']:
             self.player.direction.y = 0
@@ -188,7 +189,8 @@ class WallSlideState(PlayerState):
 
             return PlayerStateID.JUMP
 
-        self.player.direction.y = 150
+        self.player.direction.y += self.player.gravity * dt * self.player.slide_gravity_modifier
+        self.player.direction.y = min(self.player.direction.y, self.player.max_fall_speed / 8)
 
         if self.player.on_surface['floor']:
             return PlayerStateID.IDLE
@@ -236,9 +238,12 @@ class Player(pygame.sprite.Sprite):
 
         self.direction = Vector2(0,0)
         self.speed = 300
-        self.gravity = 2400
+        self.gravity = 2560 # earth 640px/s^2 but in games it should be bigger from 2-5 times
         self.jump = False
-        self.jump_height = 1125
+        self.jump_height = 1012
+        self.fall_gravity_modifier = 2
+        self.slide_gravity_modifier = 0.125
+        self.max_fall_speed = 2560
         self.can_double_jump = False
         self.can_dash = True
         self.facing = 1
