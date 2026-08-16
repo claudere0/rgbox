@@ -26,7 +26,6 @@ class Level:
         self.white_tile_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
         self.white_tile_image.blit(tileset_img, (0, 0), (7 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE))
 
-
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
@@ -37,6 +36,7 @@ class Level:
             elif obj.name == 'color_station':
                 ColorStation((obj.x, obj.y), (obj.width, obj.height), obj.properties, self.trigger_sprites, self.all_sprites, self.collision_sprites)
 
+        self.update_stantions_to_fit_world()
 
     def update(self, dt):
         self.all_sprites.update(dt)
@@ -64,15 +64,21 @@ class Level:
 
                         self.player.jump = True
                         self.player.update_color_and_size()
-                        station.draw_station()
+                        self.update_stantions_to_fit_world()
 
                     elif self.player.pigments[color_key] and not station.station_colors[color_key]:
                         self.player.pigments[color_key] = False
                         station.station_colors[color_key] = True
-                        
+
                         self.player.jump = True
                         self.player.update_color_and_size()
-                        station.draw_station()
+                        self.update_stantions_to_fit_world()
+
+    def update_stantions_to_fit_world(self):
+        has_colors = any(self.player.pigments.values())
+        for st in self.trigger_sprites:
+            if isinstance(st, ColorStation):
+                st.draw_station(has_colors)
 
     def draw(self, screen):
         has_colors = any(self.player.pigments.values())

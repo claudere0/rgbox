@@ -58,10 +58,9 @@ class ColorStation(Sprite):
                 'B': properties.get('has_blue', False)
         }
 
-        self.draw_station()
-
-    def draw_station(self):
-        self.image.fill(BLACK)
+    def draw_station(self, player_has_colors):
+        empty_color = WHITE if player_has_colors else BLACK
+        self.image.fill(empty_color)
         slot_width = self.rect.width / 3 
 
         if self.station_colors['R']:
