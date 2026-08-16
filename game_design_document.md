@@ -59,9 +59,11 @@ Need to implement classes for the following Tiled `objects`:
 *   **JumpPads (Trampolines):** Propel the player upward along the Y-axis.
 
 ### Phase 2: Saving, HUD, and Meta-game
-*   **save.json File:** Stores unlocked levels, collected Secrets (Light Orbs), and Speedrun best times.
+*   **save.json File:** Stores unlocked levels, collected Secrets, and Speedrun best times.
 *   **Game States:** Linking `MainMenu`, `LevelSelect`, `PauseMenu`, and `Playing` screens.
-*   **Minimalist HUD:** Only a level timer in the corner and an orb counter. No hand-holding hints—players must figure out the puzzles themselves.
+*   **Secrets Menu (Cameos):** A dedicated menu section with 4 slots (initially question marks). Each of the 4 main levels hides a unique collectible sprite representing a character from the developer's future games. Once found, the character is unlocked in this menu.
+*   **Replayability / Speedrun Time Bonuses:** If a player replays a level and visits an already-collected Secret location, they will find a "Time Bonus" item (a clock with a negative number, e.g., -5 seconds) instead of the character. This creates strategic speedrun routes where players must calculate if the detour is worth the time deduction!
+*   **Minimalist HUD:** Only a level timer in the corner and a secret indicator. No hand-holding hints.
 *   **Tutorials:** Parsing Tiled `Text` objects for unobtrusive background instructions (similar to Celeste).
 
 ### Phase 3: Polish & Juice
