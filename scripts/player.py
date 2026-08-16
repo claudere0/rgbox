@@ -119,8 +119,8 @@ class FallState(PlayerState):
 
             return PlayerStateID.JUMP
 
-        if (self.player.on_surface['left'] and self.player.direction.x < 0) or \
-           (self.player.on_surface['right'] and self.player.direction.x > 0):
+        if (self.player.on_surface['left'] and self.player.direction.x < 0) and self.player.pigments['B'] or \
+           (self.player.on_surface['right'] and self.player.direction.x > 0) and self.player.pigments['B']:
             return PlayerStateID.WALL_SLIDE
 
         self.player.direction.y += self.player.gravity * dt * self.player.fall_gravity_modifier
@@ -159,8 +159,8 @@ class JumpState(PlayerState):
 
             return PlayerStateID.JUMP
 
-        if (self.player.on_surface['left'] and self.player.direction.x < 0) or \
-           (self.player.on_surface['right'] and self.player.direction.x > 0):
+        if (self.player.on_surface['left'] and self.player.direction.x < 0) and self.player.pigments['B'] or \
+           (self.player.on_surface['right'] and self.player.direction.x > 0) and self.player.pigments['B']:
             return PlayerStateID.WALL_SLIDE
 
         self.player.direction.y += self.player.gravity* dt
@@ -327,8 +327,8 @@ class Player(pygame.sprite.Sprite):
         # print(self.on_surface)
 
         if self.on_surface['floor'] or self.on_surface['left'] or self.on_surface['right']:
-            self.can_double_jump = True
-            self.can_dash = True
+            self.can_double_jump = self.pigments['G']
+            self.can_dash = self.pigments['R']
 
     def update_color_and_size(self):
         count = sum(self.pigments.values())
