@@ -26,6 +26,12 @@ class Level:
         self.white_tile_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
         self.white_tile_image.blit(tileset_img, (0, 0), (7 * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE))
 
+        self.black_spike_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+        self.black_spike_image.blit(tileset_img, (0, 0), (4 * TILE_SIZE, 5 * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+
+        self.white_spike_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
+        self.white_spike_image.blit(tileset_img, (0, 0), (5 * TILE_SIZE, 5 * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
@@ -126,13 +132,18 @@ class Level:
         if has_colors:
             bg_color = BLACK
             target_texture = self.white_tile_image
+            spike_texture = self.white_spike_image
         else:
             bg_color = WHITE
             target_texture = self.black_tile_image
+            spike_texture = self.black_spike_image
 
         screen.fill(bg_color)
 
         for tile in self.terrain_sprites:
             tile.image = target_texture
+
+        for spike in self.hazard_sprites:
+            spike.image = spike_texture
 
         self.all_sprites.draw(self.player.rect.center)

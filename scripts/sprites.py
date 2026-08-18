@@ -73,7 +73,6 @@ class ColorStation(Sprite):
 class Spike(Sprite):
     def __init__(self, pos, surf, *groups):
         super().__init__(pos, surf, *groups)
-        self.rect.inflate_ip(-8, -8)
         self.rect.bottom = pos[1] + TILE_SIZE
         self.old_rect = self.rect.copy()
 
