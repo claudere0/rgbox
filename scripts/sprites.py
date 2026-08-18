@@ -70,3 +70,9 @@ class ColorStation(Sprite):
         if self.station_colors['B']:
             pygame.draw.rect(self.image, (0, 0, 255), (slot_width * 2, 0, slot_width, self.rect.height))
 
+class Spike(Sprite):
+    def __init__(self, pos, surf, *groups):
+        super().__init__(pos, surf, *groups)
+        self.rect.inflate_ip(-8, -8)
+        self.rect.bottom = pos[1] + TILE_SIZE
+        self.old_rect = self.rect.copy()

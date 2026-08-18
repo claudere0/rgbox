@@ -9,6 +9,7 @@ class PlayerStateID(Enum):
     JUMP = auto()
     WALL_SLIDE = auto()
     DASH = auto()
+    DEATH = auto() 
 
 class PlayerState:
     def __init__(self, player):
@@ -228,6 +229,38 @@ class DashState(PlayerState):
             self.player.direction.x = 0
             return PlayerStateID.FALL
 
+class DeathState(PlayerState):
+    def enter(self):
+        self.player.timers['death'].activate()
+        self.player.direction.x = 0
+        self.player.direction.y = 0
+
+        self.start_color = pygame.Color(
+            255 if self.player.pigments['R'] else 0,
+            255 if self.player.pigments['G'] else 0,
+            255 if self.player.pigments['B'] else 0
+        )
+
+        has_colors = any(self.player.pigments.values())
+        self.target_color = pygame.Color(0, 0, 0) if has_colors else pygame.Color(255, 255, 255)
+
+    def handle_input(self, keys, just_pressed):
+        if just_pressed[pygame.K_SPACE]:
+            self.player.timers['death'].deactivate()
+            self.player.needs_respawn = True
+
+    def update(self, dt):
+        self.player.direction = Vector2(0, 0)
+
+        if self.player.timers['death'].active:
+            elapsed = pygame.time.get_ticks() - self.player.timers['death'].start_time
+            progress = min(elapsed / self.player.timers['death'].duration, 1.0)
+
+            current_color = self.start_color.lerp(self.target_color, progress)
+            self.player.image.fill(current_color)
+        else:
+            self.player.needs_respawn = True
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_group_check, semicollidable_group_check, *groups):
         super().__init__(*groups)
@@ -261,9 +294,11 @@ class Player(pygame.sprite.Sprite):
             'dash': Timer(250),
             'dash_cooldown': Timer(250),
             'coyote': Timer(125),
+            'death': Timer(500),
         }
 
         self.pigments = {'R': False, 'G': False, 'B': False}
+        self.needs_respawn = False
 
         self.states = {
             PlayerStateID.IDLE: IdleState(self),
@@ -272,6 +307,7 @@ class Player(pygame.sprite.Sprite):
             PlayerStateID.JUMP: JumpState(self),
             PlayerStateID.WALL_SLIDE: WallSlideState(self),
             PlayerStateID.DASH: DashState(self),
+            PlayerStateID.DEATH: DeathState(self), 
         }
 
         self.current_state = self.states[PlayerStateID.IDLE]
