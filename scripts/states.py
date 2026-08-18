@@ -60,6 +60,11 @@ class PlayingState(State):
         self.tmx_maps = {0: load_pygame(join('data', 'levels', 'demo.tmx'))}
         self.current_stage = Level(self.tmx_maps[0])
 
+    def events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.game.change_state(StateID.PAUSE)
+
     def update(self, dt):
         self.current_stage.update(dt)
 
@@ -70,6 +75,11 @@ class PlayingState(State):
 # PAUSE -> PLAYING/SETTINGS/MENU
 
 class PauseState(State):
+    def events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.game.change_state(StateID.MENU)
+
     def draw(self, screen):
         screen.fill(CYAN)
 

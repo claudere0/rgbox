@@ -54,9 +54,9 @@ Need to implement classes for the following Tiled `objects`:
 *   **Spikes & Death:** Instant, seamless respawn (no loading screens) upon touching the `hazard_sprites` group.
 *   **ColorDoor:** A solid block. Its `self.rect` only allows the Player to pass if the player is Black (for "empty" doors) or if the player's color exactly matches the door's color. Forces players to drop abilities at stations.
 *   **Portal:** Level transition trigger. Clears the current level and parses the next `.tmx` file.
-*   **Moving Lasers & Buttons:** Lethal moving beams and buttons to toggle them.
-*   **FallingPlatform:** Platforms that crumble 0.5s after contact.
 *   **JumpPads (Trampolines):** Propel the player upward along the Y-axis.
+*   **FallingPlatform:** Platforms that crumble 0.5s after contact.
+*   **Moving Lasers & Buttons:** Lethal moving beams and buttons to toggle them.
 
 ### Phase 2: Saving, HUD, and Meta-game
 *   **save.json File:** Stores unlocked levels, collected Secrets, and Speedrun best times.
