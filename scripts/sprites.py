@@ -76,3 +76,22 @@ class Spike(Sprite):
         self.rect.inflate_ip(-8, -8)
         self.rect.bottom = pos[1] + TILE_SIZE
         self.old_rect = self.rect.copy()
+
+class ColorDoor(Sprite):
+    COLOR_MAP = {
+        'K': {'R': False, 'G': False, 'B': False}, # Black
+        'R': {'R': True,  'G': False, 'B': False}, # Red
+        'G': {'R': False, 'G': True,  'B': False}, # Green
+        'B': {'R': False, 'G': False, 'B': True},  # Blue
+        'Y': {'R': True,  'G': True,  'B': False}, # Yellow (Red + Green)
+        'C': {'R': False, 'G': True,  'B': True},  # Cyan (Green + Blue)
+        'M': {'R': True,  'G': False, 'B': True},  # Magenta (Red + Blue)
+        'W': {'R': True,  'G': True,  'B': True},  # White (All colors)
+    }
+
+    def __init__(self, pos, surf, color_code, *groups):
+        super().__init__(pos, surf, *groups)
+        self.req_pigments = self.COLOR_MAP.get(color_code, self.COLOR_MAP['K'])
+
+    def is_passable(self, player_pigments):
+        return player_pigments == self.req_pigments

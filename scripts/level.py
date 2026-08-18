@@ -1,5 +1,5 @@
 from .settings import *
-from .sprites import *
+from .sprites import Sprite, ColorStation, Spike, ColorDoor
 from .player import Player, PlayerStateID
 from .groups import AllSprites
 from os.path import join
@@ -39,6 +39,10 @@ class Level:
 
             elif obj.name == 'color_station':
                 ColorStation((obj.x, obj.y), (obj.width, obj.height), obj.properties, self.trigger_sprites, self.all_sprites, self.collision_sprites)
+
+            elif obj.name == 'color_door':
+                color_code = obj.properties.get('color', 'K') # K by default if I forget to add
+                ColorDoor((obj.x, obj.y), obj.image, color_code, self.all_sprites, self.collision_sprites)
 
         self.start_station_colors = {
             station: station.station_colors.copy() 
