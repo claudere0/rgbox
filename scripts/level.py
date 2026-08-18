@@ -1,6 +1,6 @@
 from .settings import *
-from .sprites import Sprite, ColorStation
-from .player import Player
+from .sprites import *
+from .player import Player, PlayerStateID
 from .groups import AllSprites
 from os.path import join
 
@@ -33,14 +33,50 @@ class Level:
             if obj.name == 'box':
                 self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
                 self.bg_color = WHITE if not any(self.player.pigments.values()) else BLACK
+
+                self.start_pos = (obj.x, obj.y)
+                self.start_pigments = self.player.pigments.copy()
+
             elif obj.name == 'color_station':
                 ColorStation((obj.x, obj.y), (obj.width, obj.height), obj.properties, self.trigger_sprites, self.all_sprites, self.collision_sprites)
 
+        self.start_station_colors = {
+            station: station.station_colors.copy() 
+            for station in self.trigger_sprites if isinstance(station, ColorStation)
+        }
+
+        if 'hazzards' in [layer.name for layer in tmx_map.layers]:
+            for x, y, surf in tmx_map.get_layer_by_name('hazzards').tiles():
+                Spike((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites, self.hazard_sprites)
+
         self.update_stantions_to_fit_world()
+
+    def reset_level(self):
+        self.player.rect.topleft = self.start_pos
+        self.player.direction = Vector2(0, 0)
+        self.player.needs_respawn = False
+
+        self.player.pigments = self.start_pigments.copy()
+        self.player.update_color_and_size()
+
+        for station, colors in self.start_station_colors.items():
+            station.station_colors = colors.copy()
+
+        self.update_stantions_to_fit_world()
+        self.player.change_state(PlayerStateID.IDLE)
 
     def update(self, dt):
         self.all_sprites.update(dt)
         self.update_colors(dt)
+
+        if self.player.needs_respawn:
+            self.reset_level()
+
+    def check_hazards(self):
+        if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
+            if pygame.sprite.spritecollideany(self.player, self.hazard_sprites):
+                self.player.change_state(PlayerStateID.DEATH)
+
 
     def update_colors(self, dt):
         just_pressed = pygame.key.get_just_pressed()
