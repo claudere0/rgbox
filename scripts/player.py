@@ -1,5 +1,6 @@
 from enum import Enum, auto
 from .settings import *
+from .sprites import ColorDoor
 from .timer import Timer
 
 class PlayerStateID(Enum):
@@ -350,7 +351,13 @@ class Player(pygame.sprite.Sprite):
         floor_rect = pygame.Rect(self.rect.bottomleft, (self.rect.width,8))
         right_rect = pygame.Rect(self.rect.topright + Vector2(0, self.rect.height / 8), (8, self.rect.height / 2))
         left_rect = pygame.Rect(self.rect.topleft + Vector2(-1, self.rect.height / 8), (8, self.rect.height / 2))
-        collide_rects = [sprite.rect for sprite in self.collision_sprites]
+        valid_collision_rects = []
+        for sprite in self.collision_sprites:
+            if isinstance(sprite, ColorDoor) and sprite.is_passable(self.pigments):
+                continue
+            valid_collision_rects.append(sprite.rect)
+        collide_rects = valid_collision_rects # before #51 commit was -> collide_rects = [sprite.rect for sprite in self.collision_sprites]
+
         semi_collide_rects = [sprite.rect for sprite in self.semi_collision_sprites]
 
         # pygame.draw.rect(self.display_surface, YELLOW, floor_rect)
@@ -387,6 +394,9 @@ class Player(pygame.sprite.Sprite):
     def collision(self, axis):
         for sprite in self.collision_sprites:
             if sprite.rect.colliderect(self.rect):
+                if isinstance(sprite, ColorDoor):
+                    if sprite.is_passable(self.pigments):
+                        continue
                 if axis == 'horizontal':
                     if self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right - 1:
                         self.rect.left = sprite.rect.right
