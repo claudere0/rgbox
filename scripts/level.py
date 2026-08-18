@@ -68,6 +68,7 @@ class Level:
     def update(self, dt):
         self.all_sprites.update(dt)
         self.update_colors(dt)
+        self.check_hazards()
 
         if self.player.needs_respawn:
             self.reset_level()
