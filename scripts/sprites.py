@@ -101,3 +101,12 @@ class Portal(Sprite):
         super().__init__(pos, surf, *groups)
 
         self.orientation = 'H' if size[0] > size[1] else 'V'
+
+class JumpPad(Sprite):
+    def __init__(self, pos, size, power, *groups):
+        surf = pygame.Surface(size, pygame.SRCALPHA)
+        
+        super().__init__(pos, surf, *groups)
+        self.power = power
+
+        self.rect.bottom = pos[1] + size[1]

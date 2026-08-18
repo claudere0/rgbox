@@ -1,5 +1,5 @@
 from .settings import *
-from .sprites import Sprite, ColorStation, Spike, ColorDoor, Portal
+from .sprites import Sprite, ColorStation, Spike, ColorDoor, Portal, JumpPad
 from .player import Player, PlayerStateID
 from .groups import AllSprites
 from os.path import join
@@ -44,6 +44,12 @@ class Level:
         self.portal_horiz_black = pygame.Surface((TILE_SIZE * 2, TILE_SIZE), pygame.SRCALPHA)
         self.portal_horiz_black.blit(tileset_img, (0, 0), (6 * TILE_SIZE, 7 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE))
 
+        self.jumppad_black = pygame.Surface((TILE_SIZE * 2, TILE_SIZE), pygame.SRCALPHA)
+        self.jumppad_black.blit(tileset_img, (0, 0), (0, 7 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE))
+
+        self.jumppad_white = pygame.Surface((TILE_SIZE * 2, TILE_SIZE), pygame.SRCALPHA)
+        self.jumppad_white.blit(tileset_img, (0, 0), (2 * TILE_SIZE, 7 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE))
+
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
@@ -64,6 +70,10 @@ class Level:
 
             elif obj.name == 'portal':
                 Portal((obj.x, obj.y), (obj.width, obj.height), self.trigger_sprites, self.all_sprites)
+
+            elif obj.name == 'jumppad':
+                power = obj.properties.get('power', 2024) # 1432 -> 400 px (6.25 tiles) and 2024 -> 800px (12.5 tiles)
+                JumpPad((obj.x, obj.y), (obj.width, obj.height), power, self.trigger_sprites, self.all_sprites)
 
         self.start_station_colors = {
             station: station.station_colors.copy() 
@@ -102,6 +112,16 @@ class Level:
             if isinstance(trigger, Portal):
                 if self.player.rect.colliderect(trigger.rect.inflate(-16, -16)):
                     self.reset_level()
+
+            elif isinstance(trigger, JumpPad):
+                if self.player.rect.colliderect(trigger.rect):
+                    if self.player.direction.y >= 0:
+                        self.player.direction.y = -trigger.power
+                        self.player.change_state(PlayerStateID.JUMP)
+
+                        self.player.can_dash = self.player.pigments['R']
+                        self.player.can_double_jump = self.player.pigments['G']
+
 
     def check_hazards(self):
         if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
@@ -172,5 +192,8 @@ class Level:
                     sprite.image = self.portal_vert_white if has_colors else self.portal_vert_black
                 else:
                     sprite.image = self.portal_horiz_white if has_colors else self.portal_horiz_black
+
+            elif isinstance(sprite, JumpPad):
+                sprite.image = self.jumppad_white if has_colors else self.jumppad_black
 
         self.all_sprites.draw(self.player.rect.center)
