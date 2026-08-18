@@ -1,5 +1,5 @@
 from .settings import *
-from .sprites import Sprite, ColorStation, Spike, ColorDoor
+from .sprites import Sprite, ColorStation, Spike, ColorDoor, Portal
 from .player import Player, PlayerStateID
 from .groups import AllSprites
 from os.path import join
@@ -32,6 +32,18 @@ class Level:
         self.white_spike_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
         self.white_spike_image.blit(tileset_img, (0, 0), (5 * TILE_SIZE, 5 * TILE_SIZE, TILE_SIZE, TILE_SIZE))
 
+        self.portal_vert_white = pygame.Surface((TILE_SIZE, TILE_SIZE * 2), pygame.SRCALPHA)
+        self.portal_vert_white.blit(tileset_img, (0, 0), (4 * TILE_SIZE, 6 * TILE_SIZE, TILE_SIZE, TILE_SIZE * 2))
+
+        self.portal_vert_black = pygame.Surface((TILE_SIZE, TILE_SIZE * 2), pygame.SRCALPHA)
+        self.portal_vert_black.blit(tileset_img, (0, 0), (5 * TILE_SIZE, 6 * TILE_SIZE, TILE_SIZE, TILE_SIZE * 2))
+
+        self.portal_horiz_white = pygame.Surface((TILE_SIZE * 2, TILE_SIZE), pygame.SRCALPHA)
+        self.portal_horiz_white.blit(tileset_img, (0, 0), (6 * TILE_SIZE, 6 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE))
+
+        self.portal_horiz_black = pygame.Surface((TILE_SIZE * 2, TILE_SIZE), pygame.SRCALPHA)
+        self.portal_horiz_black.blit(tileset_img, (0, 0), (6 * TILE_SIZE, 7 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE))
+
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
@@ -49,6 +61,9 @@ class Level:
             elif obj.name == 'color_door':
                 color_code = obj.properties.get('color', 'K') # K by default if I forget to add
                 ColorDoor((obj.x, obj.y), obj.image, color_code, self.all_sprites, self.collision_sprites)
+
+            elif obj.name == 'portal':
+                Portal((obj.x, obj.y), (obj.width, obj.height), self.trigger_sprites, self.all_sprites)
 
         self.start_station_colors = {
             station: station.station_colors.copy() 
@@ -82,6 +97,11 @@ class Level:
 
         if self.player.needs_respawn:
             self.reset_level()
+
+        for trigger in self.trigger_sprites:
+            if isinstance(trigger, Portal):
+                if self.player.rect.colliderect(trigger.rect.inflate(-16, -16)):
+                    self.reset_level()
 
     def check_hazards(self):
         if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
@@ -145,5 +165,12 @@ class Level:
 
         for spike in self.hazard_sprites:
             spike.image = spike_texture
+
+        for sprite in self.trigger_sprites:
+            if isinstance(sprite, Portal):
+                if sprite.orientation == 'V':
+                    sprite.image = self.portal_vert_white if has_colors else self.portal_vert_black
+                else:
+                    sprite.image = self.portal_horiz_white if has_colors else self.portal_horiz_black
 
         self.all_sprites.draw(self.player.rect.center)

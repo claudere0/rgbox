@@ -53,9 +53,9 @@ class ColorStation(Sprite):
         super().__init__(pos, surf, *groups)
 
         self.station_colors = {
-                'R': properties.get('has_red', False),
-                'G': properties.get('has_green', False),
-                'B': properties.get('has_blue', False)
+            'R': properties.get('has_red', False),
+            'G': properties.get('has_green', False),
+            'B': properties.get('has_blue', False)
         }
 
     def draw_station(self, player_has_colors):
@@ -94,3 +94,10 @@ class ColorDoor(Sprite):
 
     def is_passable(self, player_pigments):
         return player_pigments == self.req_pigments
+
+class Portal(Sprite):
+    def __init__(self, pos, size, *groups):
+        surf = pygame.Surface(size, pygame.SRCALPHA) 
+        super().__init__(pos, surf, *groups)
+
+        self.orientation = 'H' if size[0] > size[1] else 'V'
