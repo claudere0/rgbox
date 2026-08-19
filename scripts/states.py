@@ -148,6 +148,7 @@ class PlayingState(State):
         self.current_stage = None
         self.current_level_name = ""
         self.start_time = 0 
+        self.last_run_time = 0
 
     def load_level(self, level_name):
         self.current_level_name = level_name
@@ -168,6 +169,8 @@ class PlayingState(State):
             
             if hasattr(self.current_stage, 'is_completed') and self.current_stage.is_completed:
                 final_time_ms = pygame.time.get_ticks() - self.start_time
+                self.last_run_time = final_time_ms
+
                 is_new_record = self.game.save_manager.save_best_time(self.current_level_name, final_time_ms)
 
                 if self.current_level_name in LEVEL_ORDER:
@@ -212,8 +215,71 @@ class GameOverState(State):
 # LEVEL_COMPLETE -> play next level PLAYING(retry or load next level) or quit to MENU
 
 class LevelCompleteState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.options = ["NEXT LEVEL", "RETRY", "MENU"]
+        self.selected_index = 0
+        self.font_huge = pygame.font.SysFont('courier', 64, bold=True)
+        self.font_large = pygame.font.SysFont('courier', 48, bold=True)
+        self.font_small = pygame.font.SysFont('courier', 32)
+
+    def events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.options)
+
+            elif event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.options)
+
+            elif event.key == pygame.K_RETURN:
+                selected = self.options[self.selected_index]
+                playing_state = self.game.states[StateID.PLAYING]
+                
+                if selected == "NEXT LEVEL":
+                    current_level = playing_state.current_level_name
+                    if current_level in LEVEL_ORDER:
+                        idx = LEVEL_ORDER.index(current_level)
+                        if idx + 1 < len(LEVEL_ORDER):
+                            next_level = LEVEL_ORDER[idx + 1]
+                            playing_state.load_level(next_level)
+
+                        else:
+                            self.game.change_state(StateID.MENU) 
+                            
+                elif selected == "RETRY":
+                    playing_state.load_level(playing_state.current_level_name)
+                    
+                elif selected == "MENU":
+                    self.game.change_state(StateID.MENU)
+
     def draw(self, screen):
         screen.fill(YELLOW)
+
+        title = self.font_huge.render("LEVEL COMPLETE", True, BLACK)
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 150))
+        screen.blit(title, title_rect)
+
+        playing_state = self.game.states[StateID.PLAYING]
+        run_time = playing_state.last_run_time
+        seconds = (run_time // 1000) % 60
+        minutes = (run_time // 60000) % 60
+        millis = (run_time % 1000) // 10
+        
+        time_text = self.font_small.render(f"YOUR TIME: {minutes:02d}:{seconds:02d}:{millis:02d}", True, RED)
+        time_rect = time_text.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 70))
+        screen.blit(time_text, time_rect)
+
+        for i, option in enumerate(self.options):
+            if i == self.selected_index:
+                color = BLACK
+                text = f"> {option} <" 
+            else:
+                color = RED
+                text = option
+                
+            img = self.font_large.render(text, True, color)
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 50 + i * 60))
+            screen.blit(img, rect)
 
 # SETTINGS -> go back to MENU/PAUSE
 
