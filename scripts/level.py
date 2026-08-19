@@ -54,6 +54,8 @@ class Level:
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
+        lasers_dict = {} 
+
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
                 self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
@@ -78,6 +80,23 @@ class Level:
 
             elif obj.name == 'falling_platform':
                 FallingPlatform((obj.x, obj.y), (obj.width, obj.height), self.player, self.collision_sprites, self.falling_sprites, self.all_sprites)
+
+            elif obj.name == 'laser':
+                move_axis = obj.properties.get('move_axis', 'y')
+                move_dist = obj.properties.get('move_dist', 0)
+                speed = obj.properties.get('speed', 0)
+                laser = Laser((obj.x, obj.y), (obj.width, obj.height), move_axis, move_dist, speed, self.all_sprites, self.hazard_sprites)
+                lasers_dict[obj.id] = laser
+
+            elif obj.name == 'button':
+                target_id = obj.properties.get('target_id', None)
+                timer_ms = obj.properties.get('timer', 4000) # По умолчанию 4 секунды
+                button = TimerButton((obj.x, obj.y), (obj.width, obj.height), target_id, timer_ms, self.all_sprites, self.trigger_sprites)
+
+        for sprite in self.trigger_sprites:
+            if isinstance(sprite, TimerButton):
+                if sprite.target_id in lasers_dict:
+                    sprite.target_laser = lasers_dict[sprite.target_id]
 
         self.start_station_colors = {
             station: station.station_colors.copy() 
@@ -104,6 +123,19 @@ class Level:
         for platform in self.falling_sprites:
             platform.reset()
 
+        for sprite in self.trigger_sprites:
+            if isinstance(sprite, TimerButton) and sprite.pressed:
+                sprite.timer.deactivate()
+                sprite.pressed = False
+                sprite.image = pygame.Surface(sprite.base_rect.size)
+                sprite.image.fill((255, 0, 0))
+                sprite.rect = sprite.base_rect.copy()
+        for sprite in self.hazard_sprites:
+            if isinstance(sprite, Laser):
+                sprite.active = True
+                sprite.rect.topleft = sprite.start_pos
+                sprite.direction = 1
+
         self.update_stantions_to_fit_world()
         self.player.change_state(PlayerStateID.IDLE)
 
@@ -129,12 +161,20 @@ class Level:
                         self.player.can_dash = self.player.pigments['R']
                         self.player.can_double_jump = self.player.pigments['G']
 
+            elif isinstance(trigger, TimerButton):
+                if self.player.rect.colliderect(trigger.rect.inflate(8, 8)):
+                    trigger.press()
+
 
     def check_hazards(self):
         if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
-            if pygame.sprite.spritecollideany(self.player, self.hazard_sprites):
-                self.player.change_state(PlayerStateID.DEATH)
+            for hazard in self.hazard_sprites:
+                if isinstance(hazard, Laser) and not hazard.active:
+                    continue
 
+                if self.player.rect.colliderect(hazard.rect):
+                    self.player.change_state(PlayerStateID.DEATH)
+                    break
 
     def update_colors(self, dt):
         just_pressed = pygame.key.get_just_pressed()
@@ -191,7 +231,8 @@ class Level:
             tile.image = target_texture
 
         for spike in self.hazard_sprites:
-            spike.image = spike_texture
+            if isinstance(spike, Spike):
+                spike.image = spike_texture
 
         for platform in self.falling_sprites:
             platform.update_visuals(has_colors)

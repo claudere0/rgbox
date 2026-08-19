@@ -222,11 +222,11 @@ class TimerButton(Sprite):
         surf = pygame.Surface(size)
         surf.fill((255, 0, 0))
         super().__init__(pos, surf, *groups)
-        
+
         self.base_rect = self.rect.copy()
         self.target_id = target_id
         self.target_laser = None
-        
+
         from .timer import Timer
         self.timer = Timer(timer_ms)
         self.pressed = False
@@ -246,7 +246,7 @@ class TimerButton(Sprite):
 
     def update(self, dt):
         self.timer.update()
-        
+
         if self.timer.active:
             elapsed = pygame.time.get_ticks() - self.timer.start_time
             progress = min(elapsed / self.timer.duration, 1.0)
