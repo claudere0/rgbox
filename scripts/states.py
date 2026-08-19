@@ -68,13 +68,77 @@ class MenuState(State):
 # LEVEL_SELECT -> PLAYING or MENU
 
 class LevelSelectState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.selected_index = 0
+        self.font_main = pygame.font.SysFont('courier', 48, bold=True)
+        self.font_small = pygame.font.SysFont('courier', 24)
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.game.change_state(StateID.MENU)
 
+            elif event.key == pygame.K_UP:
+                if self.selected_index > 0:
+                    self.selected_index -= 1
+
+            elif event.key == pygame.K_DOWN:
+                if self.selected_index < len(LEVEL_ORDER) - 1:
+                    self.selected_index += 1
+
+            elif event.key == pygame.K_RETURN:
+                level_name = LEVEL_ORDER[self.selected_index]
+                if self.game.save_manager.is_level_unlocked(level_name):
+                    self.game.states[StateID.PLAYING].load_level(level_name)
+
     def draw(self, screen):
         screen.fill(BLUE)
+
+        center_y = WINDOW_HEIGHT / 2
+        spacing = 80
+        
+        for i, level_name in enumerate(LEVEL_ORDER):
+            offset = i - self.selected_index 
+            is_unlocked = self.game.save_manager.is_level_unlocked(level_name)
+
+            if i == self.selected_index:
+                if is_unlocked:
+                    color = YELLOW
+                    display_name = level_name.upper()
+                else:
+                    color = (255, 255, 255)
+                    display_name = "??? (LOCKED)"
+
+                title_img = self.font_main.render(display_name, True, color)
+                title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y))
+                screen.blit(title_img, title_rect)
+
+                if is_unlocked:
+                    best_time = self.game.save_manager.data["best_times"].get(level_name, None)
+                    if best_time is not None:
+                        seconds = (best_time // 1000) % 60
+                        minutes = (best_time // 60000) % 60
+                        millis = (best_time % 1000) // 10
+                        time_text = f"BEST TIME: {minutes:02d}:{seconds:02d}:{millis:02d}"
+                    else:
+                        time_text = "NOT COMPLETED YET"
+                        
+                    time_img = self.font_small.render(time_text, True, WHITE)
+                    time_rect = time_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + 40))
+                    screen.blit(time_img, time_rect)
+                
+            else:
+                if is_unlocked:
+                    color = (255, 255, 255)
+                    display_name = level_name.upper()
+                else:
+                    color = (0, 0, 0) # Темно-серый
+                    display_name = "???"
+                    
+                title_img = self.font_small.render(display_name, True, color)
+                title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + (offset * spacing)))
+                screen.blit(title_img, title_rect)
 
 # PLAYING -> PAUSE (ESCAPE) or GAME_OVER/LEVEL_COMPLETE
 
