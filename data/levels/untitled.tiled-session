@@ -1,0 +1,109 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level_three.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "demo_tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level_one.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.5481,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1070.0602079912426,
+                "y": 1212.3700054734538
+            }
+        },
+        "level_three.tmx": {
+            "scale": 0.8046,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 1078.1754909271688,
+                "y": 536.2913248819289
+            }
+        },
+        "level_two.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.5017,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 897.9469802670917,
+                "y": 664.7398843930634
+            }
+        },
+        "level_zero.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.411,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 645.9854014598541,
+                "y": 745.7420924574208
+            }
+        },
+        "tutorial_one.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 1.0638,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 561.6657266403458,
+                "y": 485.5235946606504
+            }
+        },
+        "tutorial_zero.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.7249,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 493.1714719271624,
+                "y": 341.4264036418817
+            }
+        }
+    },
+    "last.imagePath": "/Users/amirkarataev/Desktop/Python4/projects/rgbox/graphics/tilesets",
+    "map.height": 24,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "openFiles": [
+        "tutorial_zero.tmx",
+        "demo_tiles.tsx",
+        "tutorial_one.tmx",
+        "level_zero.tmx",
+        "level_one.tmx",
+        "level_two.tmx",
+        "level_three.tmx"
+    ],
+    "project": "untitled.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "tutorial_zero.tmx",
+        "demo_tiles.tsx",
+        "tutorial_one.tmx",
+        "level_zero.tmx",
+        "level_one.tmx",
+        "level_two.tmx",
+        "level_three.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 64,
+        "width": 64
+    }
+}
