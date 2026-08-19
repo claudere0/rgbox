@@ -182,33 +182,29 @@ class Level:
         just_pressed = pygame.key.get_just_pressed()
         if just_pressed[pygame.K_e]:
             for station in self.trigger_sprites:
-                if self.player.rect.move(0, 16).colliderect(station.rect):
-
-                    dx = self.player.rect.centerx - station.rect.left
-                    slot_width = station.rect.width / 3
-                    
-                    if dx < slot_width:
-                        color_key = 'R'
-                    elif dx < slot_width * 2:
-                        color_key = 'G'
-                    else:
-                        color_key = 'B'
-
-                    if not self.player.pigments[color_key] and station.station_colors[color_key]:
-                        self.player.pigments[color_key] = True
-                        station.station_colors[color_key] = False
-
-                        self.player.jump = True
-                        self.player.update_color_and_size()
-                        self.update_stantions_to_fit_world()
-
-                    elif self.player.pigments[color_key] and not station.station_colors[color_key]:
-                        self.player.pigments[color_key] = False
-                        station.station_colors[color_key] = True
-
-                        self.player.jump = True
-                        self.player.update_color_and_size()
-                        self.update_stantions_to_fit_world()
+                if isinstance(station, ColorStation):
+                    if self.player.rect.move(0, 16).colliderect(station.rect):
+                        dx = self.player.rect.centerx - station.rect.left
+                        slot_width = station.rect.width / 3
+                        
+                        if dx < slot_width:
+                            color_key = 'R'
+                        elif dx < slot_width * 2:
+                            color_key = 'G'
+                        else:
+                            color_key = 'B'
+                        if not self.player.pigments[color_key] and station.station_colors[color_key]:
+                            self.player.pigments[color_key] = True
+                            station.station_colors[color_key] = False
+                            self.player.jump = True
+                            self.player.update_color_and_size()
+                            self.update_stantions_to_fit_world()
+                        elif self.player.pigments[color_key] and not station.station_colors[color_key]:
+                            self.player.pigments[color_key] = False
+                            station.station_colors[color_key] = True
+                            self.player.jump = True
+                            self.player.update_color_and_size()
+                            self.update_stantions_to_fit_world()
 
     def update_stantions_to_fit_world(self):
         has_colors = any(self.player.pigments.values())

@@ -101,7 +101,7 @@
   <object id="20" name="laser" x="832" y="448" width="16" height="256">
    <properties>
     <property name="move_axis" value="x"/>
-    <property name="move_dist" value="576"/>
+    <property name="move_dist" type="int" value="576"/>
     <property name="speed" type="int" value="192"/>
    </properties>
   </object>

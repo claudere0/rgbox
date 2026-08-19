@@ -16,11 +16,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.5481,
+            "scale": 0.4961,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1070.0602079912426,
-                "y": 1212.3700054734538
+                "x": 875.8314855875833,
+                "y": 811.3283612174965
             }
         },
         "level_three.tmx": {
@@ -35,11 +35,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.5017,
+            "scale": 0.4536,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 897.9469802670917,
-                "y": 664.7398843930634
+                "x": 880.731922398589,
+                "y": 768.2980599647266
             }
         },
         "level_zero.tmx": {
@@ -49,8 +49,8 @@
             "scale": 0.411,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 645.9854014598541,
-                "y": 745.7420924574208
+                "x": 959.8540145985403,
+                "y": 767.6399026763992
             }
         },
         "tutorial_one.tmx": {
@@ -60,8 +60,8 @@
             "scale": 1.0638,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 561.6657266403458,
-                "y": 485.5235946606504
+                "x": 960.2368866328256,
+                "y": 767.5314908817446
             }
         },
         "tutorial_zero.tmx": {
@@ -71,8 +71,8 @@
             "scale": 0.7249,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 493.1714719271624,
-                "y": 341.4264036418817
+                "x": 959.4426817492067,
+                "y": 759.4150917367913
             }
         }
     },
@@ -91,7 +91,7 @@
         "level_three.tmx"
     ],
     "project": "untitled.tiled-project",
-    "property.type": "int",
+    "property.type": "string",
     "recentFiles": [
         "tutorial_zero.tmx",
         "demo_tiles.tsx",
