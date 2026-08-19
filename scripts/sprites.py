@@ -1,4 +1,5 @@
 from .settings import *
+from .timer import Timer
 
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, pos, surf = pygame.Surface((TILE_SIZE, TILE_SIZE)), *groups):
@@ -110,3 +111,72 @@ class JumpPad(Sprite):
         self.power = power
 
         self.rect.bottom = pos[1] + size[1]
+
+class FallingPlatform(Sprite):
+    def __init__(self, pos, size, player, collision_sprites, *groups):
+        surf = pygame.Surface(size, pygame.SRCALPHA)
+        super().__init__(pos, surf, *groups)
+
+        self.player = player
+        self.collision_group = collision_sprites
+        self.base_pos = pos
+        self.shake_amount = 8
+
+        self.state = 'IDLE'
+
+        self.timers = {
+            'crumble': Timer(500),
+            'respawn': Timer(2000)
+        }
+
+    def reset(self):
+        self.state = 'IDLE'
+        self.timers['crumble'].deactivate()
+        self.timers['respawn'].deactivate()
+        self.collision_group.add(self)
+        self.rect.topleft = self.base_pos
+
+    def update(self, dt):
+        self.old_rect = self.rect.copy()
+        
+        for timer in self.timers.values():
+            timer.update()
+
+        if self.state == 'IDLE':
+            if self.rect.colliderect(self.player.rect.inflate(8, 8)):
+                self.state = 'SHAKING'
+                self.timers['crumble'].activate()
+
+        elif self.state == 'SHAKING':
+            if not self.timers['crumble'].active:
+                self.state = 'BROKEN'
+                self.timers['respawn'].activate()
+                self.collision_group.remove(self) 
+
+        elif self.state == 'BROKEN':
+            if not self.timers['respawn'].active:
+                self.state = 'IDLE'
+                self.collision_group.add(self)
+
+    def update_visuals(self, has_colors):
+        if self.state == 'BROKEN':
+            self.image.set_alpha(0)
+            return
+
+        self.image.set_alpha(255)
+
+        base_color = pygame.Color(255, 255, 255) if has_colors else pygame.Color(0, 0, 0)
+        
+        if self.state == 'SHAKING':
+            elapsed = pygame.time.get_ticks() - self.timers['crumble'].start_time
+            progress = min(elapsed / self.timers['crumble'].duration, 1.0)
+
+            target_color = pygame.Color(255, 255, 0)
+            current_color = base_color.lerp(target_color, progress)
+            self.image.fill(current_color)
+
+            offset = math.sin(pygame.time.get_ticks() * 0.05) * self.shake_amount
+            self.rect.x = self.base_pos[0] + offset
+        else:
+            self.image.fill(base_color)
+            self.rect.x = self.base_pos[0]
