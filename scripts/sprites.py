@@ -120,7 +120,7 @@ class FallingPlatform(Sprite):
         self.player = player
         self.collision_group = collision_sprites
         self.base_pos = pos
-        self.shake_amount = 8
+        self.shake_amount = 4
 
         self.state = 'IDLE'
 
@@ -143,7 +143,7 @@ class FallingPlatform(Sprite):
             timer.update()
 
         if self.state == 'IDLE':
-            if self.rect.colliderect(self.player.rect.inflate(8, 8)):
+            if self.rect.colliderect(self.player.rect.inflate(16, 16)):
                 self.state = 'SHAKING'
                 self.timers['crumble'].activate()
 
@@ -180,3 +180,85 @@ class FallingPlatform(Sprite):
         else:
             self.image.fill(base_color)
             self.rect.x = self.base_pos[0]
+
+class Laser(Sprite):
+    def __init__(self, start_pos, size, move_axis, move_dist, speed, *groups):
+        surf = pygame.Surface(size)
+        surf.fill((255, 0, 0))
+        super().__init__(start_pos, surf, *groups)
+
+        self.start_pos = start_pos
+        if move_axis == 'x':
+            self.end_pos = (start_pos[0] + move_dist, start_pos[1])
+        else:
+            self.end_pos = (start_pos[0], start_pos[1] + move_dist)
+
+        self.move_axis = move_axis
+        self.speed = speed
+        self.direction = 1
+        self.active = True
+
+    def update(self, dt):
+        self.old_rect = self.rect.copy()
+
+        self.image.set_alpha(255 if self.active else 63)
+
+        if self.speed > 0:
+            if self.move_axis == 'x':
+                self.rect.x += self.speed * self.direction * dt
+                if self.rect.x >= self.end_pos[0] and self.direction == 1:
+                    self.direction = -1
+                elif self.rect.x <= self.start_pos[0] and self.direction == -1:
+                    self.direction = 1
+            else:
+                self.rect.y += self.speed * self.direction * dt
+                if self.rect.y >= self.end_pos[1] and self.direction == 1:
+                    self.direction = -1
+                elif self.rect.y <= self.start_pos[1] and self.direction == -1:
+                    self.direction = 1
+
+class TimerButton(Sprite):
+    def __init__(self, pos, size, target_id, timer_ms, *groups):
+        surf = pygame.Surface(size)
+        surf.fill((255, 0, 0))
+        super().__init__(pos, surf, *groups)
+        
+        self.base_rect = self.rect.copy()
+        self.target_id = target_id
+        self.target_laser = None
+        
+        from .timer import Timer
+        self.timer = Timer(timer_ms)
+        self.pressed = False
+
+    def press(self):
+        if not self.pressed:
+            self.pressed = True
+            self.timer.activate()
+
+            self.image = pygame.Surface((self.base_rect.width, 16))
+            self.image.fill((0, 255, 0)) 
+            self.rect = self.image.get_frect()
+            self.rect.bottomleft = self.base_rect.bottomleft
+
+            if self.target_laser:
+                self.target_laser.active = False
+
+    def update(self, dt):
+        self.timer.update()
+        
+        if self.timer.active:
+            elapsed = pygame.time.get_ticks() - self.timer.start_time
+            progress = min(elapsed / self.timer.duration, 1.0)
+
+            current_color = pygame.Color(0, 255, 0).lerp(pygame.Color(255, 0, 0), progress)
+            self.image.fill(current_color)
+        else:
+            if self.pressed:
+                self.pressed = False
+                self.image = pygame.Surface(self.base_rect.size)
+                self.image.fill((255, 0, 0))
+                self.rect = self.base_rect.copy()
+
+                if self.target_laser:
+                    self.target_laser.active = True
