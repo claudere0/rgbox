@@ -336,10 +336,55 @@ class LevelCompleteState(State):
 # SETTINGS -> go back to MENU/PAUSE
 
 class SettingsState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.options = ["FULLSCREEN", "BACK"]
+        self.selected_index = 0
+        self.font_large = pygame.font.SysFont('courier', 48, bold=True)
+        self.font_huge = pygame.font.SysFont('courier', 64, bold=True)
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.game.change_state(StateID.MENU)
+            if event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.options)
+            elif event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.options)
+            elif event.key == pygame.K_RETURN:
+                selected = self.options[self.selected_index]
+                
+                if selected == "FULLSCREEN":
+                    current_val = self.game.save_manager.data["settings"]["fullscreen"]
+                    new_val = not current_val
+                    self.game.save_manager.data["settings"]["fullscreen"] = new_val
+                    self.game.save_manager.save()
+
+                    pygame.display.toggle_fullscreen()
+                    
+                elif selected == "BACK":
+                    self.game.change_state(StateID.MENU)
 
     def draw(self, screen):
-        screen.fill(WHITE)
+        screen.fill(BLACK)
+
+        title = self.font_huge.render("SETTINGS", True, WHITE)
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 120))
+        screen.blit(title, title_rect)
+
+        for i, option in enumerate(self.options):
+
+            display_text = option
+            if option == "FULLSCREEN":
+                is_on = self.game.save_manager.data["settings"]["fullscreen"]
+                status = "[ON]" if is_on else "[OFF]"
+                display_text = f"FULLSCREEN {status}"
+
+            if i == self.selected_index:
+                color = YELLOW
+                text = f"> {display_text} <" 
+            else:
+                color = WHITE
+                text = display_text
+
+            img = self.font_large.render(text, True, color)
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 80))
+            screen.blit(img, rect)

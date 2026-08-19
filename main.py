@@ -5,12 +5,16 @@ from scripts.save_manager import SaveManager
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+        self.save_manager = SaveManager()
+
+        is_fullscreen = self.save_manager.data["settings"]["fullscreen"]
+        flags = pygame.FULLSCREEN if is_fullscreen else 0
+
+        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), flags)
         pygame.display.set_caption('rgbox')
         self.clock = pygame.time.Clock()
         self.running = True
-
-        self.save_manager = SaveManager()
 
         self.states = {
             StateID.MENU: MenuState(self),
