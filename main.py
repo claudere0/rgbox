@@ -17,7 +17,6 @@ class Game:
             StateID.LEVEL_SELECT: LevelSelectState(self),
             StateID.PLAYING: PlayingState(self),
             StateID.PAUSE: PauseState(self),
-            StateID.GAME_OVER: GameOverState(self),
             StateID.LEVEL_COMPLETE: LevelCompleteState(self),
             StateID.SETTINGS: SettingsState(self),
         }

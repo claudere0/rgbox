@@ -140,7 +140,7 @@ class LevelSelectState(State):
                 title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + (offset * spacing)))
                 screen.blit(title_img, title_rect)
 
-# PLAYING -> PAUSE (ESCAPE) or GAME_OVER/LEVEL_COMPLETE
+# PLAYING -> PAUSE (ESCAPE) or LEVEL_COMPLETE
 
 class PlayingState(State):
     def __init__(self, game):
@@ -149,6 +149,7 @@ class PlayingState(State):
         self.current_level_name = ""
         self.start_time = 0 
         self.last_run_time = 0
+        self.pause_start_time = 0
 
     def load_level(self, level_name):
         self.current_level_name = level_name
@@ -158,9 +159,14 @@ class PlayingState(State):
         self.start_time = pygame.time.get_ticks()
         self.game.change_state(StateID.PLAYING)
 
+    def resume_timer(self):
+        pause_duration = pygame.time.get_ticks() - self.pause_start_time
+        self.start_time += pause_duration
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                self.pause_start_time = pygame.time.get_ticks()
                 self.game.change_state(StateID.PAUSE)
 
     def update(self, dt):
@@ -185,7 +191,11 @@ class PlayingState(State):
         if self.current_stage:
             self.current_stage.draw(screen)
 
-            current_time_ms = pygame.time.get_ticks() - self.start_time
+            if self.game.current_state == self:
+                current_time_ms = pygame.time.get_ticks() - self.start_time
+            else:
+                current_time_ms = self.pause_start_time - self.start_time
+
             seconds = (current_time_ms // 1000) % 60
             minutes = (current_time_ms // 60000) % 60
             millis = (current_time_ms % 1000) // 10
@@ -198,19 +208,61 @@ class PlayingState(State):
 # PAUSE -> PLAYING/SETTINGS/MENU
 
 class PauseState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.options = ["RESUME", "RESTART LEVEL", "MENU"]
+        self.selected_index = 0
+        self.font_huge = pygame.font.SysFont('courier', 64, bold=True)
+        self.font_large = pygame.font.SysFont('courier', 48, bold=True)
+
+        self.overlay = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+        self.overlay.fill((0, 0, 0, 127))
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                self.game.change_state(StateID.MENU)
+                self.game.states[StateID.PLAYING].resume_timer()
+                self.game.change_state(StateID.PLAYING)
+
+            elif event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.options)
+
+            elif event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.options)
+
+            elif event.key == pygame.K_RETURN:
+                selected = self.options[self.selected_index]
+                playing_state = self.game.states[StateID.PLAYING]
+                
+                if selected == "RESUME":
+                    playing_state.resume_timer()
+                    self.game.change_state(StateID.PLAYING)
+
+                elif selected == "RESTART LEVEL":
+                    playing_state.load_level(playing_state.current_level_name)
+
+                elif selected == "MENU":
+                    self.game.change_state(StateID.MENU)
 
     def draw(self, screen):
-        screen.fill(CYAN)
+        self.game.states[StateID.PLAYING].draw(screen)
+        screen.blit(self.overlay, (0, 0))
 
-# GAME_OVER -> restart PLAYING or quit to MENU
+        title = self.font_huge.render("PAUSED", True, WHITE)
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 120))
+        screen.blit(title, title_rect)
 
-class GameOverState(State):
-    def draw(self, screen):
-        screen.fill(RED)
+        for i, option in enumerate(self.options):
+            if i == self.selected_index:
+                color = YELLOW
+                text = f"> {option} <" 
+            else:
+                color = WHITE
+                text = option
+                
+            img = self.font_large.render(text, True, color)
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 60))
+            screen.blit(img, rect)
 
 # LEVEL_COMPLETE -> play next level PLAYING(retry or load next level) or quit to MENU
 
