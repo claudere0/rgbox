@@ -1,5 +1,6 @@
 from scripts.settings import *
 from scripts.states import *
+from scripts.save_manager import SaveManager
 
 class Game:
     def __init__(self):
@@ -8,6 +9,8 @@ class Game:
         pygame.display.set_caption('rgbox')
         self.clock = pygame.time.Clock()
         self.running = True
+
+        self.save_manager = SaveManager()
 
         self.states = {
             StateID.MENU: MenuState(self),
