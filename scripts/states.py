@@ -29,18 +29,41 @@ class State:
 # MENU -> LEVEL_SELECT or SETTINGS
 
 class MenuState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.options = ["PLAY", "SETTINGS", "QUIT"]
+        self.selected_index = 0
+        self.font_large = pygame.font.SysFont('courier', 64)
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                # self.game.change_state(StateID.LEVEL_SELECT)
-                self.game.states[StateID.PLAYING].load_level("tutorial_zero")
-            if event.key == pygame.K_s:
-                self.game.change_state(StateID.SETTINGS)
-            if event.key == pygame.K_q:
-                self.game.running = False
+            if event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.options)
+            elif event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.options)
+            elif event.key == pygame.K_RETURN:
+                selected = self.options[self.selected_index]
+                if selected == "PLAY":
+                    self.game.change_state(StateID.LEVEL_SELECT)
+                elif selected == "SETTINGS":
+                    self.game.change_state(StateID.SETTINGS)
+                elif selected == "QUIT":
+                    self.game.running = False
 
     def draw(self, screen):
         screen.fill(BLACK)
+
+        for i, option in enumerate(self.options):
+            if i == self.selected_index:
+                color = YELLOW
+                text = f"> {option} <"
+            else:
+                color = WHITE
+                text = option
+                
+            img = self.font_large.render(text, True, color)
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 50 + i * 80))
+            screen.blit(img, rect)
 
 # LEVEL_SELECT -> PLAYING or MENU
 
