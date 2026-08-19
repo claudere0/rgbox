@@ -22,8 +22,8 @@ class Game:
             StateID.SETTINGS: SettingsState(self),
         }
 
-        # self.current_state = self.states[StateID.MENU]
-        self.current_state = self.states[StateID.PLAYING]
+        self.current_state = self.states[StateID.MENU]
+        # self.current_state = self.states[StateID.PLAYING]
 
     def change_state(self, state_id: StateID):
         self.current_state = self.states[state_id]

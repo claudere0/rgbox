@@ -32,7 +32,8 @@ class MenuState(State):
     def events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
-                self.game.change_state(StateID.LEVEL_SELECT)
+                # self.game.change_state(StateID.LEVEL_SELECT)
+                self.game.states[StateID.PLAYING].load_level("tutorial_zero")
             if event.key == pygame.K_s:
                 self.game.change_state(StateID.SETTINGS)
             if event.key == pygame.K_q:
@@ -57,8 +58,17 @@ class LevelSelectState(State):
 class PlayingState(State):
     def __init__(self, game):
         super().__init__(game)
-        self.tmx_maps = {0: load_pygame(join('data', 'levels', 'demo.tmx'))}
-        self.current_stage = Level(self.tmx_maps[0])
+        self.current_stage = None
+        self.current_level_name = ""
+        self.start_time = 0 
+
+    def load_level(self, level_name):
+        self.current_level_name = level_name
+        tmx_map = load_pygame(join('data', 'levels', f'{level_name}.tmx'))
+        self.current_stage = Level(tmx_map)
+
+        self.start_time = pygame.time.get_ticks()
+        self.game.change_state(StateID.PLAYING)
 
     def events(self, event):
         if event.type == pygame.KEYDOWN:
@@ -66,11 +76,29 @@ class PlayingState(State):
                 self.game.change_state(StateID.PAUSE)
 
     def update(self, dt):
-        self.current_stage.update(dt)
+        if self.current_stage:
+            self.current_stage.update(dt)
+            if hasattr(self.current_stage, 'is_completed') and self.current_stage.is_completed:
+                final_time_ms = pygame.time.get_ticks() - self.start_time
+
+                is_new_record = self.game.save_manager.save_best_time(self.current_level_name, final_time_ms)
+                self.game.save_manager.unlock_level("tutorial_one") 
+
+                self.game.change_state(StateID.LEVEL_COMPLETE)
 
     def draw(self, screen):
-        self.current_stage.draw(screen)
-        # screen.fill(GREEN)
+        if self.current_stage:
+            self.current_stage.draw(screen)
+
+            current_time_ms = pygame.time.get_ticks() - self.start_time
+            seconds = (current_time_ms // 1000) % 60
+            minutes = (current_time_ms // 60000) % 60
+            millis = (current_time_ms % 1000) // 10
+            
+            font = pygame.font.SysFont(None, 36)
+
+            time_text = font.render(f"TIME: {minutes:02d}:{seconds:02d}:{millis:02d}", True, (255, 0, 0))
+            screen.blit(time_text, (20, 20))
 
 # PAUSE -> PLAYING/SETTINGS/MENU
 
