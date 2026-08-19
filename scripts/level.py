@@ -1,5 +1,5 @@
 from .settings import *
-from .sprites import Sprite, ColorStation, Spike, ColorDoor, Portal, JumpPad
+from .sprites import *
 from .player import Player, PlayerStateID
 from .groups import AllSprites
 from os.path import join
@@ -12,8 +12,9 @@ class Level:
         self.collision_sprites = pygame.sprite.Group()
         self.terrain_sprites = pygame.sprite.Group()
         self.semicollidable_sprites = pygame.sprite.Group()
-        self.hazard_sprites = pygame.sprite.Group() # dead if collide
-        self.trigger_sprites = pygame.sprite.Group() # check for overlapping
+        self.hazard_sprites = pygame.sprite.Group()
+        self.trigger_sprites = pygame.sprite.Group()
+        self.falling_sprites = pygame.sprite.Group()
 
         self.setup(tmx_map)
 
@@ -75,6 +76,9 @@ class Level:
                 power = obj.properties.get('power', 2024) # 1432 -> 400 px (6.25 tiles) and 2024 -> 800px (12.5 tiles)
                 JumpPad((obj.x, obj.y), (obj.width, obj.height), power, self.trigger_sprites, self.all_sprites)
 
+            elif obj.name == 'falling_platform':
+                FallingPlatform((obj.x, obj.y), (obj.width, obj.height), self.player, self.collision_sprites, self.falling_sprites, self.all_sprites)
+
         self.start_station_colors = {
             station: station.station_colors.copy() 
             for station in self.trigger_sprites if isinstance(station, ColorStation)
@@ -96,6 +100,9 @@ class Level:
 
         for station, colors in self.start_station_colors.items():
             station.station_colors = colors.copy()
+
+        for platform in self.falling_sprites:
+            platform.reset()
 
         self.update_stantions_to_fit_world()
         self.player.change_state(PlayerStateID.IDLE)
@@ -185,6 +192,9 @@ class Level:
 
         for spike in self.hazard_sprites:
             spike.image = spike_texture
+
+        for platform in self.falling_sprites:
+            platform.update_visuals(has_colors)
 
         for sprite in self.trigger_sprites:
             if isinstance(sprite, Portal):
