@@ -16,6 +16,8 @@ class Level:
         self.trigger_sprites = pygame.sprite.Group()
         self.falling_sprites = pygame.sprite.Group()
 
+        self.is_completed = False
+
         self.setup(tmx_map)
 
     def setup(self, tmx_map):
@@ -150,7 +152,7 @@ class Level:
         for trigger in self.trigger_sprites:
             if isinstance(trigger, Portal):
                 if self.player.rect.colliderect(trigger.rect.inflate(-16, -16)):
-                    self.reset_level()
+                    self.is_completed = True
 
             elif isinstance(trigger, JumpPad):
                 if self.player.rect.colliderect(trigger.rect):

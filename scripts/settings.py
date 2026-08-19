@@ -15,3 +15,12 @@ RED = (255,0,0)
 MAGENTA = (255,0,255)
 YELLOW = (255,255,0)
 WHITE = (255,255,255)
+
+LEVEL_ORDER = [
+    "tutorial_zero",
+    "tutorial_one",
+    "level_zero",
+    "level_one",
+    "level_two",
+    "level_three"
+]

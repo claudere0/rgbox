@@ -78,11 +78,16 @@ class PlayingState(State):
     def update(self, dt):
         if self.current_stage:
             self.current_stage.update(dt)
+            
             if hasattr(self.current_stage, 'is_completed') and self.current_stage.is_completed:
                 final_time_ms = pygame.time.get_ticks() - self.start_time
-
                 is_new_record = self.game.save_manager.save_best_time(self.current_level_name, final_time_ms)
-                self.game.save_manager.unlock_level("tutorial_one") 
+
+                if self.current_level_name in LEVEL_ORDER:
+                    current_idx = LEVEL_ORDER.index(self.current_level_name)
+                    if current_idx + 1 < len(LEVEL_ORDER):
+                        next_level_name = LEVEL_ORDER[current_idx + 1]
+                        self.game.save_manager.unlock_level(next_level_name)
 
                 self.game.change_state(StateID.LEVEL_COMPLETE)
 
