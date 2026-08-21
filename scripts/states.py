@@ -9,7 +9,6 @@ class StateID(Enum):
     LEVEL_SELECT = auto()
     PLAYING = auto()
     PAUSE = auto()
-    GAME_OVER = auto()
     LEVEL_COMPLETE = auto()
     SETTINGS = auto()
 

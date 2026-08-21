@@ -119,6 +119,9 @@ class FallingPlatform(Sprite):
 
         self.player = player
         self.collision_group = collision_sprites
+
+        self.collision_group.add(self)
+
         self.base_pos = pos
         self.shake_amount = 4
 
