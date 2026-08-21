@@ -5,7 +5,8 @@ from .groups import AllSprites
 from os.path import join
 
 class Level:
-    def __init__(self, tmx_map):
+    def __init__(self, tmx_map, playing_state):
+        self.playing_state = playing_state
         self.display_surface = pygame.display.get_surface()
 
         self.all_sprites = AllSprites()
@@ -15,6 +16,7 @@ class Level:
         self.hazard_sprites = pygame.sprite.Group()
         self.trigger_sprites = pygame.sprite.Group()
         self.falling_sprites = pygame.sprite.Group()
+        self.collectible_sprites = pygame.sprite.Group()
 
         self.is_completed = False
 
@@ -52,6 +54,22 @@ class Level:
 
         self.jumppad_white = pygame.Surface((TILE_SIZE * 2, TILE_SIZE), pygame.SRCALPHA)
         self.jumppad_white.blit(tileset_img, (0, 0), (2 * TILE_SIZE, 7 * TILE_SIZE, TILE_SIZE * 2, TILE_SIZE))
+
+        self.time_bonus_surfaces = []
+        for i in range(4):
+            black_surf = pygame.Surface((128, 128), pygame.SRCALPHA)
+            black_surf.blit(tileset_img, (0, 0), (i * 128, 512, 128, 128))
+
+            white_surf = pygame.Surface((128, 128), pygame.SRCALPHA)
+            white_surf.blit(tileset_img, (0, 0), (i * 128, 640, 128, 128))
+
+            self.time_bonus_surfaces.append({'black': black_surf, 'white': white_surf})
+            
+        self.cameo_surfaces = []
+        for i in range(4):
+            cameo_surf = pygame.Surface((128, 128), pygame.SRCALPHA)
+            cameo_surf.blit(tileset_img, (0, 0), (i * 128, 768, 128, 128))
+            self.cameo_surfaces.append(cameo_surf)
 
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
@@ -100,6 +118,18 @@ class Level:
                 font_size = obj.properties.get('font_size', 24)
                 
                 TextSprite((obj.x, obj.y), text_content, int(font_size), self.all_sprites)
+
+            elif obj.name == 'secret':
+                secret_id = int(obj.properties.get('secret_id', 0))
+
+                bonus_ms = (secret_id + 1) * 5000 
+
+                if self.playing_state.game.save_manager.has_secret(secret_id):
+                    surfs = self.time_bonus_surfaces[secret_id]
+                    TimeBonusSprite((obj.x, obj.y), surfs['black'], surfs['white'], bonus_ms, self.collectible_sprites, self.all_sprites)
+                else:
+                    surf = self.cameo_surfaces[secret_id]
+                    CameoSprite((obj.x, obj.y), secret_id, surf, self.collectible_sprites, self.all_sprites)
 
         for sprite in self.trigger_sprites:
             if isinstance(sprite, TimerButton):
@@ -173,6 +203,15 @@ class Level:
                 if self.player.rect.colliderect(trigger.rect.inflate(8, 8)):
                     trigger.press()
 
+        for item in self.collectible_sprites:
+            if self.player.rect.colliderect(item.rect):
+                if isinstance(item, CameoSprite):
+                    self.playing_state.game.save_manager.unlock_secret(item.secret_id)
+                    item.kill()
+
+                elif isinstance(item, TimeBonusSprite):
+                    self.playing_state.start_time += item.bonus_ms
+                    item.kill()
 
     def check_hazards(self):
         if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
@@ -250,6 +289,10 @@ class Level:
 
             elif isinstance(sprite, JumpPad):
                 sprite.image = self.jumppad_white if has_colors else self.jumppad_black
+
+        for sprite in self.collectible_sprites:
+            if isinstance(sprite, TimeBonusSprite):
+                sprite.image = sprite.white_surf if has_colors else sprite.black_surf
 
         for sprite in self.all_sprites:
             if isinstance(sprite, TextSprite):

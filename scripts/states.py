@@ -153,7 +153,8 @@ class PlayingState(State):
     def load_level(self, level_name):
         self.current_level_name = level_name
         tmx_map = load_pygame(join('data', 'levels', f'{level_name}.tmx'))
-        self.current_stage = Level(tmx_map)
+
+        self.current_stage = Level(tmx_map, self)
 
         self.start_time = pygame.time.get_ticks()
         self.game.change_state(StateID.PLAYING)
