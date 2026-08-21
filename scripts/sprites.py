@@ -265,3 +265,29 @@ class TimerButton(Sprite):
 
                 if self.target_laser:
                     self.target_laser.active = True
+
+class TextSprite(Sprite):
+    def __init__(self, pos, text_string, font_size, *groups):
+        font = pygame.font.SysFont('courier', font_size, bold=True)
+        lines = text_string.split('\n')
+
+        def render_text_block(color):
+            rendered_lines = [font.render(line, True, color) for line in lines]
+
+            if not rendered_lines:
+                return pygame.Surface((1, 1), pygame.SRCALPHA)
+
+            width = max(surf.get_width() for surf in rendered_lines)
+            height = sum(surf.get_height() for surf in rendered_lines)
+
+            final_surf = pygame.Surface((width, height), pygame.SRCALPHA)
+            current_y = 0
+            for line_surf in rendered_lines:
+                final_surf.blit(line_surf, (0, current_y))
+                current_y += line_surf.get_height()
+            return final_surf
+
+        self.white_surf = render_text_block((255, 255, 255))
+        self.black_surf = render_text_block((0, 0, 0))
+
+        super().__init__(pos, self.white_surf, *groups)

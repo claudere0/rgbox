@@ -95,6 +95,12 @@ class Level:
                 timer_ms = obj.properties.get('timer', 4000) # По умолчанию 4 секунды
                 button = TimerButton((obj.x, obj.y), (obj.width, obj.height), target_id, timer_ms, self.all_sprites, self.trigger_sprites)
 
+            elif obj.name == 'text':
+                text_content = obj.properties.get('text', 'EMPTY')
+                font_size = obj.properties.get('font_size', 24)
+                
+                TextSprite((obj.x, obj.y), text_content, int(font_size), self.all_sprites)
+
         for sprite in self.trigger_sprites:
             if isinstance(sprite, TimerButton):
                 if sprite.target_id in lasers_dict:
@@ -245,4 +251,7 @@ class Level:
             elif isinstance(sprite, JumpPad):
                 sprite.image = self.jumppad_white if has_colors else self.jumppad_black
 
+        for sprite in self.all_sprites:
+            if isinstance(sprite, TextSprite):
+                sprite.image = sprite.white_surf if has_colors else sprite.black_surf
         self.all_sprites.draw(self.player.rect.center)

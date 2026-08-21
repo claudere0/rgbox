@@ -19,38 +19,41 @@
             "scale": 0.5227,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 936.4836426248326,
-                "y": 1196.671130667687
+                "x": 812.1293284867037,
+                "y": 1011.0962311077099
             }
         },
         "level_three.tmx": {
-            "scale": 0.3519,
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.3107,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 896.5615231599888,
-                "y": 691.9579425973286
+                "x": 909.2372063083361,
+                "y": 854.5220469906665
             }
         },
         "level_two.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.408,
+            "scale": 0.4295,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 783.0882352941178,
-                "y": 640.9313725490197
+                "x": 667.0547147846335,
+                "y": 660.0698486612341
             }
         },
         "level_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2701,
+            "scale": 0.3668,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1486.4864864864862,
-                "y": 660.8663457978525
+                "x": 1372.6826608505996,
+                "y": 511.1777535441656
             }
         },
         "tutorial_one.tmx": {
@@ -68,11 +71,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.9936,
+            "scale": 1.7323,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 272.24235104669884,
-                "y": 276.268115942029
+                "x": 252.5544074352018,
+                "y": 236.9681925763436
             }
         }
     },
@@ -90,7 +93,7 @@
         "level_three.tmx"
     ],
     "project": "untitled.tiled-project",
-    "property.type": "string",
+    "property.type": "int",
     "recentFiles": [
         "tutorial_zero.tmx",
         "tutorial_one.tmx",
