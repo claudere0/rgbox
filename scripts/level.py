@@ -12,7 +12,6 @@ class Level:
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.terrain_sprites = pygame.sprite.Group()
-        self.semicollidable_sprites = pygame.sprite.Group()
         self.hazard_sprites = pygame.sprite.Group()
         self.trigger_sprites = pygame.sprite.Group()
         self.falling_sprites = pygame.sprite.Group()
@@ -78,7 +77,7 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
-                self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.semicollidable_sprites, self.all_sprites)
+                self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.all_sprites)
                 self.bg_color = WHITE if not any(self.player.pigments.values()) else BLACK
 
                 self.start_pos = (obj.x, obj.y)

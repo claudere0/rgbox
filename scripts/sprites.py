@@ -296,7 +296,7 @@ class Collectible(Sprite):
     def __init__(self, pos, surf, *groups):
         super().__init__(pos, surf, *groups)
         self.base_y = self.rect.y
-        self.float_speed = 0.05
+        self.float_speed = 0.005
         self.float_amplitude = 16
 
     def update(self, dt):
@@ -314,3 +314,4 @@ class TimeBonusSprite(Collectible):
         self.white_surf = white_surf
         self.bonus_ms = bonus_ms
         super().__init__(pos, self.black_surf, *groups)
+        

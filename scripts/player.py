@@ -263,7 +263,7 @@ class DeathState(PlayerState):
             self.player.needs_respawn = True
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, collision_group_check, semicollidable_group_check, *groups):
+    def __init__(self, pos, surf, collision_group_check, *groups):
         super().__init__(*groups)
         self.image = pygame.Surface(surf)
         self.image.fill(WHITE)
@@ -284,7 +284,6 @@ class Player(pygame.sprite.Sprite):
         self.is_dashing = False
 
         self.collision_sprites = collision_group_check
-        self.semi_collision_sprites = semicollidable_group_check
         self.on_surface = {'floor': False, 'left': False, 'right': False}
         self.platform = None
 
@@ -358,13 +357,11 @@ class Player(pygame.sprite.Sprite):
             valid_collision_rects.append(sprite.rect)
         collide_rects = valid_collision_rects # before #51 commit was -> collide_rects = [sprite.rect for sprite in self.collision_sprites]
 
-        semi_collide_rects = [sprite.rect for sprite in self.semi_collision_sprites]
-
         # pygame.draw.rect(self.display_surface, YELLOW, floor_rect)
         # pygame.draw.rect(self.display_surface, YELLOW, right_rect)
         # pygame.draw.rect(self.display_surface, YELLOW, left_rect)
 
-        self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 or floor_rect.collidelist(semi_collide_rects) >= 0 and self.direction.y >= 0 else False
+        self.on_surface['floor'] = True if floor_rect.collidelist(collide_rects) >= 0 and self.direction.y >= 0 else False
         self.on_surface['right'] = True if right_rect.collidelist(collide_rects) >= 0 else False
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
         # print(self.on_surface)
@@ -408,12 +405,3 @@ class Player(pygame.sprite.Sprite):
                     if self.rect.bottom >= sprite.rect.top and self.old_rect.bottom <= sprite.old_rect.top + 1:
                         self.rect.bottom = sprite.rect.top
                     self.direction.y = 0
-
-    # def semi_collision(self):
-    #     if not self.timers['fall_platform'].active:
-    #         for sprite in self.semi_collision_sprites:
-    #             if sprite.rect.colliderect(self.rect):
-    #                 if self.rect.bottom >= sprite.rect.top and int(self.old_rect.bottom) <= int(sprite.old_rect.top):
-    #                     self.rect.bottom = sprite.rect.top
-    #                     if self.direction.y > 0:
-    #                         self.direction.y = 0
