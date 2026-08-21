@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="24" tilewidth="64" tileheight="64" infinite="0" nextlayerid="5" nextobjectid="26">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="30" height="24" tilewidth="64" tileheight="64" infinite="0" nextlayerid="5" nextobjectid="27">
  <tileset firstgid="1" source="demo_tiles.tsx"/>
  <layer id="1" name="background" width="30" height="24">
   <data encoding="csv">
@@ -115,6 +115,11 @@
     <property name="font_size" type="int" value="36"/>
     <property name="text">touch to button to
   temporary block laser</property>
+   </properties>
+  </object>
+  <object id="26" name="secret" x="704" y="1280" width="128" height="128">
+   <properties>
+    <property name="secret_id" type="int" value="3"/>
    </properties>
   </object>
  </objectgroup>
