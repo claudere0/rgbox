@@ -11,6 +11,7 @@ class StateID(Enum):
     PAUSE = auto()
     LEVEL_COMPLETE = auto()
     SETTINGS = auto()
+    SECRETS = auto()
 
 class State:
     def __init__(self, game):
@@ -25,12 +26,12 @@ class State:
     def draw(self, screen):
         pass
 
-# MENU -> LEVEL_SELECT or SETTINGS
+# MENU -> LEVEL_SELECT or SECRETS or SETTINGS
 
 class MenuState(State):
     def __init__(self, game):
         super().__init__(game)
-        self.options = ["PLAY", "SETTINGS", "QUIT"]
+        self.options = ["PLAY", "SECRETS", "SETTINGS", "QUIT"]
         self.selected_index = 0
         self.font_large = pygame.font.SysFont('courier', 64)
 
@@ -38,14 +39,21 @@ class MenuState(State):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 self.selected_index = (self.selected_index - 1) % len(self.options)
+
             elif event.key == pygame.K_DOWN:
                 self.selected_index = (self.selected_index + 1) % len(self.options)
+
             elif event.key == pygame.K_RETURN:
                 selected = self.options[self.selected_index]
                 if selected == "PLAY":
                     self.game.change_state(StateID.LEVEL_SELECT)
+
+                elif selected == "SECRETS":
+                    self.game.change_state(StateID.SECRETS)
+
                 elif selected == "SETTINGS":
                     self.game.change_state(StateID.SETTINGS)
+
                 elif selected == "QUIT":
                     self.game.running = False
 
@@ -388,3 +396,68 @@ class SettingsState(State):
             img = self.font_large.render(text, True, color)
             rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 80))
             screen.blit(img, rect)
+
+# SECRETS -> MENU
+
+class SecretsState(State):
+    def __init__(self, game):
+        super().__init__(game)
+        self.font_title = pygame.font.SysFont('courier', 64, bold=True)
+        self.font_name = pygame.font.SysFont('courier', 32, bold=True)
+        self.font_small = pygame.font.SysFont('courier', 24)
+
+        self.cameo_names = ["NINJA", "ELUETTE", "RAPPY", "NANAS"]
+
+        tileset_img = pygame.image.load(join('graphics', 'tilesets', 'demo_tiles.png')).convert_alpha()
+        self.cameo_surfaces = []
+
+        for i in range(4):
+            surf = pygame.Surface((128, 128), pygame.SRCALPHA)
+            surf.blit(tileset_img, (0, 0), (i * 128, 768, 128, 128))
+            self.cameo_surfaces.append(surf)
+
+    def events(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key in (pygame.K_ESCAPE, pygame.K_RETURN):
+                self.game.change_state(StateID.MENU)
+
+    def draw(self, screen):
+        screen.fill(BLACK)
+
+        title = self.font_title.render("SECRETS GALLERY", True, YELLOW)
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, 80))
+        screen.blit(title, title_rect)
+
+        instruction = self.font_small.render("PRESS ESC TO RETURN", True, WHITE)
+        inst_rect = instruction.get_frect(center=(WINDOW_WIDTH / 2, 130))
+        screen.blit(instruction, inst_rect)
+
+        start_x = WINDOW_WIDTH / 2 - 300
+        spacing_x = 200
+
+        for i in range(4):
+            x = start_x + (i * spacing_x)
+            y = WINDOW_HEIGHT / 2
+
+            is_unlocked = self.game.save_manager.has_secret(i)
+
+            if is_unlocked:
+                img_rect = self.cameo_surfaces[i].get_frect(center=(x, y))
+                screen.blit(self.cameo_surfaces[i], img_rect)
+
+                name_text = self.font_name.render(self.cameo_names[i], True, WHITE)
+
+            else:
+                placeholder = pygame.Surface((128, 128))
+                placeholder.fill((255, 0, 255))
+                img_rect = placeholder.get_frect(center=(x, y))
+                screen.blit(placeholder, img_rect)
+
+                q_text = self.font_title.render("?", True, WHITE)
+                q_rect = q_text.get_frect(center=(x, y))
+                screen.blit(q_text, q_rect)
+
+                name_text = self.font_name.render("???", True, (100, 100, 100))
+
+            name_rect = name_text.get_frect(center=(x, y + 90))
+            screen.blit(name_text, name_rect)

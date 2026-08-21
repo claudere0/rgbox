@@ -23,6 +23,7 @@ class Game:
             StateID.PAUSE: PauseState(self),
             StateID.LEVEL_COMPLETE: LevelCompleteState(self),
             StateID.SETTINGS: SettingsState(self),
+            StateID.SECRETS: SecretsState(self),
         }
 
         self.current_state = self.states[StateID.MENU]
