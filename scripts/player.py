@@ -73,7 +73,7 @@ class RunState(PlayerState):
 
     def update(self, dt):
         if random.random() < 0.125:
-            self.player.spawn_dust(0.125)
+            self.player.spawn_dust('run')
 
         if self.player.is_dashing:
             self.player.is_dashing = False
@@ -132,7 +132,8 @@ class FallState(PlayerState):
         self.player.direction.y = min(self.player.direction.y, self.player.max_fall_speed)
 
         if self.player.on_surface['floor']:
-            self.player.spawn_dust(1.0)
+            impact_vel = self.player.direction.y 
+            self.player.spawn_dust('land', impact_vel)
             self.player.direction.y = 0
             if self.player.direction.x != 0:
                 return PlayerStateID.RUN
@@ -199,7 +200,8 @@ class WallSlideState(PlayerState):
         self.player.direction.y = min(self.player.direction.y, self.player.max_fall_speed / 8)
 
         if self.player.on_surface['floor']:
-            self.player.spawn_dust(1.0)
+            impact_vel = self.player.direction.y 
+            self.player.spawn_dust('land', impact_vel)
             return PlayerStateID.IDLE
 
         if self.player.on_surface['left'] and self.player.direction.x >= 0:
@@ -238,7 +240,7 @@ class DashState(PlayerState):
 
 class DeathState(PlayerState):
     def enter(self):
-        self.player.spawn_dust(2.0)
+        self.player.spawn_dust('death') 
 
         self.player.timers['death'].activate()
         self.player.direction.x = 0
@@ -402,30 +404,47 @@ class Player(pygame.sprite.Sprite):
                 return g
         return self.groups()[0]
 
-    def spawn_dust(self, amount_multiplier=1.0):
+    def spawn_dust(self, spawn_type='land', impact_vel=0):
         all_sprites = self.get_all_sprites_group()
-
-        area = self.rect.width * self.rect.height
-        base_amount = int(area / 128)
-        amount = int(base_amount * amount_multiplier)
-        
         has_colors = any(self.pigments.values())
         color = WHITE if has_colors else BLACK
 
-        for _ in range(amount):
-            if amount_multiplier > 1.5:
+        if spawn_type == 'run':
+            spawn_x = self.rect.left if self.direction.x > 0 else self.rect.right
+            spawn_pos = (spawn_x, self.rect.bottom)
+            
+            vel_x = random.uniform(-64, 64)
+            vel_y = random.uniform(-64, -192)
+            lifetime = random.randint(125, 500)
+            DustParticle(spawn_pos, color, (vel_x, vel_y), lifetime, all_sprites)
+            
+        elif spawn_type == 'land':
+            vel = max(0, impact_vel) # defence from negative numbers
+            amount = int(vel ** 0.5) # square root
+            
+            for i in range(amount):
+                if i % 2 == 0:
+                    spawn_x = self.rect.left
+                    vel_x = random.uniform(-192, -64)
+                else:
+                    spawn_x = self.rect.right
+                    vel_x = random.uniform(64, 192)
+                    
+                spawn_pos = (spawn_x, self.rect.bottom)
+                vel_y = random.uniform(-64, -256)
+                lifetime = random.randint(125, 500)
+                DustParticle(spawn_pos, color, (vel_x, vel_y), lifetime, all_sprites)
+                
+        elif spawn_type == 'death':
+            area = self.rect.width * self.rect.height
+            amount = int((area / 64))
+            
+            for _ in range(amount):
+                spawn_pos = self.rect.center
                 vel_x = random.uniform(-448, 448)
                 vel_y = random.uniform(-448, 448)
-                spawn_y = self.rect.centery
-            else:
-                vel_x = random.uniform(-128, 128)
-                vel_y = random.uniform(-64, -256)
-                spawn_y = self.rect.bottom
-
-            lifetime = random.randint(125, 500)
-            spawn_pos = (self.rect.centerx, spawn_y)
-
-            DustParticle(spawn_pos, color, (vel_x, vel_y), lifetime, all_sprites)
+                lifetime = random.randint(125, 500)
+                DustParticle(spawn_pos, color, (vel_x, vel_y), lifetime, all_sprites)
 
     def spawn_trail(self):
         all_sprites = self.get_all_sprites_group()
