@@ -1,4 +1,6 @@
-import pygame, math
+import pygame
+import math
+import random
 from pygame.math import Vector2
 
 UNIT = 8
