@@ -72,6 +72,9 @@ class RunState(PlayerState):
             self.player.is_dashing = True
 
     def update(self, dt):
+        if random.random() < 0.125:
+            self.player.spawn_dust(0.125)
+
         if self.player.is_dashing:
             self.player.is_dashing = False
             return PlayerStateID.DASH
@@ -129,6 +132,7 @@ class FallState(PlayerState):
         self.player.direction.y = min(self.player.direction.y, self.player.max_fall_speed)
 
         if self.player.on_surface['floor']:
+            self.player.spawn_dust(1.0)
             self.player.direction.y = 0
             if self.player.direction.x != 0:
                 return PlayerStateID.RUN
@@ -195,6 +199,7 @@ class WallSlideState(PlayerState):
         self.player.direction.y = min(self.player.direction.y, self.player.max_fall_speed / 8)
 
         if self.player.on_surface['floor']:
+            self.player.spawn_dust(1.0)
             return PlayerStateID.IDLE
 
         if self.player.on_surface['left'] and self.player.direction.x >= 0:
@@ -215,6 +220,7 @@ class DashState(PlayerState):
         pass
 
     def update(self, dt):
+        self.player.spawn_trail()
         self.player.direction.y = 0
 
         self.player.direction.x = self.dash_dir * 3
@@ -232,6 +238,8 @@ class DashState(PlayerState):
 
 class DeathState(PlayerState):
     def enter(self):
+        self.player.spawn_dust(2.0)
+
         self.player.timers['death'].activate()
         self.player.direction.x = 0
         self.player.direction.y = 0
@@ -402,7 +410,7 @@ class Player(pygame.sprite.Sprite):
         amount = int(base_amount * amount_multiplier)
         
         has_colors = any(self.pigments.values())
-        color = BLACK if has_colors else WHITE
+        color = WHITE if has_colors else BLACK
 
         for _ in range(amount):
             if amount_multiplier > 1.5:
