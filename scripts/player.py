@@ -47,6 +47,10 @@ class IdleState(PlayerState):
         if self.player.jump:
             self.player.jump = False
             self.player.direction.y = -self.player.jump_height
+
+            self.player.scale_x = 0.75
+            self.player.scale_y = 1.25
+
             self.player.rect.bottom -= 1
             return PlayerStateID.JUMP
 
@@ -82,6 +86,10 @@ class RunState(PlayerState):
         if self.player.jump:
             self.player.jump = False
             self.player.direction.y = -self.player.jump_height
+
+            self.player.scale_x = 0.75
+            self.player.scale_y = 1.25
+
             self.player.rect.bottom -= 1
             return PlayerStateID.JUMP
 
@@ -121,6 +129,9 @@ class FallState(PlayerState):
         if self.player.jump:
             self.player.jump = False
             self.player.direction.y = -self.player.jump_height
+
+            self.player.scale_x = 0.75
+            self.player.scale_y = 1.25
 
             return PlayerStateID.JUMP
 
@@ -164,6 +175,9 @@ class JumpState(PlayerState):
             self.player.jump = False
             self.player.direction.y = -self.player.jump_height
 
+            self.player.scale_x = 0.75
+            self.player.scale_y = 1.25
+
             return PlayerStateID.JUMP
 
         if (self.player.on_surface['left'] and self.player.direction.x < 0) and self.player.pigments['B'] or \
@@ -194,6 +208,9 @@ class WallSlideState(PlayerState):
 
             self.player.timers['wall_jump_block'].activate()
 
+            self.player.scale_x = 0.75
+            self.player.scale_y = 1.25
+
             return PlayerStateID.JUMP
 
         self.player.direction.y += self.player.gravity * dt * self.player.slide_gravity_modifier
@@ -202,6 +219,10 @@ class WallSlideState(PlayerState):
         if self.player.on_surface['floor']:
             impact_vel = self.player.direction.y 
             self.player.spawn_dust('land', impact_vel)
+
+            self.player.scale_x = 1.25
+            self.player.scale_y = 0.75
+
             return PlayerStateID.IDLE
 
         if self.player.on_surface['left'] and self.player.direction.x >= 0:
@@ -275,19 +296,28 @@ class DeathState(PlayerState):
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, surf, collision_group_check, *groups):
         super().__init__(*groups)
-        self.image = pygame.Surface(surf)
-        self.image.fill(WHITE)
+        self.base_image = pygame.Surface(surf)
+        self.base_image.fill(WHITE)
+        self.image = self.base_image.copy()
+
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
+        self.display_rect = self.rect.copy()
+
+        self.scale_x = 1.0
+        self.scale_y = 1.0
 
         self.direction = Vector2(0,0)
         self.speed = 300
+
         self.gravity = 2560 # earth 640px/s^2 but in games it should be bigger from 2-5 times
         self.jump = False
         self.jump_height = 1012
+
         self.fall_gravity_modifier = 2
         self.slide_gravity_modifier = 0.125
         self.max_fall_speed = 1600 # I wanted it to be 2560 means 48 px per second but it can cause a bugs cause my little paltforms has thickness of 32 i need less than 32 * 60 means less than 1920 (3/4 of 2560) and I choose 1600 (5/8 of 2560)
+
         self.can_double_jump = False
         self.can_dash = True
         self.facing = 1
@@ -350,6 +380,19 @@ class Player(pygame.sprite.Sprite):
         self.update_timers()
         self.check_contact()
 
+        lerp_speed = 15 * dt
+        self.scale_x += (1.0 - self.scale_x) * lerp_speed
+        self.scale_y += (1.0 - self.scale_y) * lerp_speed
+
+        self.scale_x = max(0.75, min(1.25, self.scale_x))
+        self.scale_y = max(0.75, min(1.25, self.scale_y))
+
+        new_width = max(1, int(self.base_image.get_width() * self.scale_x))
+        new_height = max(1, int(self.base_image.get_height() * self.scale_y))
+        self.image = pygame.transform.scale(self.base_image, (new_width, new_height))
+
+        self.display_rect = self.image.get_frect(center=self.rect.center)
+
         print(self.current_state)
 
     def update_timers(self):
@@ -392,10 +435,12 @@ class Player(pygame.sprite.Sprite):
         new_size = (5 + 2 * count) * UNIT # UNIT = 8
 
         old_center = self.rect.center
-        self.image = pygame.Surface((new_size, new_size))
-        self.image.fill(color)
+        self.base_image = pygame.Surface((new_size, new_size))
+        self.base_image.fill(color)
+        self.image = self.base_image.copy()
 
         self.rect = self.image.get_frect()
+        self.display_rect = self.rect.copy()
         self.rect.center = old_center
 
     def get_all_sprites_group(self):
