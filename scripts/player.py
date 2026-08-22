@@ -1,6 +1,6 @@
 from enum import Enum, auto
 from .settings import *
-from .sprites import ColorDoor
+from .sprites import ColorDoor, DustParticle, TrailParticle
 from .timer import Timer
 
 class PlayerStateID(Enum):
@@ -387,6 +387,41 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_frect()
         self.rect.center = old_center
+
+    def get_all_sprites_group(self):
+        for g in self.groups():
+            if type(g).__name__ == 'AllSprites':
+                return g
+        return self.groups()[0]
+
+    def spawn_dust(self, amount_multiplier=1.0):
+        all_sprites = self.get_all_sprites_group()
+
+        area = self.rect.width * self.rect.height
+        base_amount = int(area / 128)
+        amount = int(base_amount * amount_multiplier)
+        
+        has_colors = any(self.pigments.values())
+        color = BLACK if has_colors else WHITE
+
+        for _ in range(amount):
+            if amount_multiplier > 1.5:
+                vel_x = random.uniform(-448, 448)
+                vel_y = random.uniform(-448, 448)
+                spawn_y = self.rect.centery
+            else:
+                vel_x = random.uniform(-128, 128)
+                vel_y = random.uniform(-64, -256)
+                spawn_y = self.rect.bottom
+
+            lifetime = random.randint(125, 500)
+            spawn_pos = (self.rect.centerx, spawn_y)
+
+            DustParticle(spawn_pos, color, (vel_x, vel_y), lifetime, all_sprites)
+
+    def spawn_trail(self):
+        all_sprites = self.get_all_sprites_group()
+        TrailParticle(self.rect.topleft, self.image, 250, all_sprites)
 
     def collision(self, axis):
         for sprite in self.collision_sprites:
