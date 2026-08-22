@@ -151,6 +151,9 @@ class FallState(PlayerState):
             return PlayerStateID.IDLE
 
 class JumpState(PlayerState):
+    def enter(self):
+        self.player.audio.play_sfx('jump') 
+
     def handle_input(self, keys, just_pressed):
         if not self.player.timers['wall_jump_block'].active:
             input_vector = Vector2(0,0)
@@ -236,6 +239,7 @@ class WallSlideState(PlayerState):
 
 class DashState(PlayerState):
     def enter(self):
+        self.player.audio.play_sfx('dash')
         self.player.timers['dash'].activate()
         self.dash_dir = self.player.facing 
 
@@ -261,6 +265,7 @@ class DashState(PlayerState):
 
 class DeathState(PlayerState):
     def enter(self):
+        self.player.audio.play_sfx('death') 
         self.player.spawn_dust('death') 
 
         self.player.timers['death'].activate()

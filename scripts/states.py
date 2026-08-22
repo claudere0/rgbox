@@ -29,6 +29,9 @@ class State:
 # MENU -> LEVEL_SELECT or SECRETS or SETTINGS
 
 class MenuState(State):
+    def enter(self):
+        self.game.audio.play_music('menu.ogg', fade_ms=2000)
+
     def __init__(self, game):
         super().__init__(game)
         self.options = ["PLAY", "SECRETS", "SETTINGS", "QUIT"]

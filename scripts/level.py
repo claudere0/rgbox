@@ -187,7 +187,10 @@ class Level:
         for trigger in self.trigger_sprites:
             if isinstance(trigger, Portal):
                 if self.player.rect.colliderect(trigger.rect.inflate(-16, -16)):
-                    self.is_completed = True
+                    if not self.is_completed:
+                        self.playing_state.game.audio.play_sfx('portal')
+                        self.is_completed = True
+
 
             elif isinstance(trigger, JumpPad):
                 if self.player.rect.colliderect(trigger.rect):
@@ -199,11 +202,13 @@ class Level:
                         self.player.can_double_jump = self.player.pigments['G']
 
             elif isinstance(trigger, TimerButton):
+                self.playing_state.game.audio.play_sfx('secret')
                 if self.player.rect.colliderect(trigger.rect.inflate(8, 8)):
                     trigger.press()
 
         for item in self.collectible_sprites:
             if self.player.rect.colliderect(item.rect):
+                self.playing_state.game.audio.play_sfx('secret')
                 if isinstance(item, CameoSprite):
                     self.playing_state.game.save_manager.unlock_secret(item.secret_id)
 
@@ -241,12 +246,14 @@ class Level:
                         else:
                             color_key = 'B'
                         if not self.player.pigments[color_key] and station.station_colors[color_key]:
+                            self.player.audio.play_sfx('color') 
                             self.player.pigments[color_key] = True
                             station.station_colors[color_key] = False
                             self.player.jump = True
                             self.player.update_color_and_size()
                             self.update_stantions_to_fit_world()
                         elif self.player.pigments[color_key] and not station.station_colors[color_key]:
+                            self.player.audio.play_sfx('color') 
                             self.player.pigments[color_key] = False
                             station.station_colors[color_key] = True
                             self.player.jump = True
