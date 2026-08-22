@@ -304,8 +304,9 @@ class Collectible(Sprite):
         self.rect.y = self.base_y + math.sin(current_time * self.float_speed) * self.float_amplitude
 
 class CameoSprite(Collectible):
-    def __init__(self, pos, secret_id, surf, *groups):
+    def __init__(self, pos, secret_id, surf, bonus_ms, *groups):
         self.secret_id = secret_id
+        self.bonus_ms = bonus_ms
         super().__init__(pos, surf, *groups)
 
 class TimeBonusSprite(Collectible):

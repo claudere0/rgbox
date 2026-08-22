@@ -128,7 +128,7 @@ class Level:
                     TimeBonusSprite((obj.x, obj.y), surfs['black'], surfs['white'], bonus_ms, self.collectible_sprites, self.all_sprites)
                 else:
                     surf = self.cameo_surfaces[secret_id]
-                    CameoSprite((obj.x, obj.y), secret_id, surf, self.collectible_sprites, self.all_sprites)
+                    CameoSprite((obj.x, obj.y), secret_id, surf, bonus_ms, self.collectible_sprites, self.all_sprites)
 
         for sprite in self.trigger_sprites:
             if isinstance(sprite, TimerButton):
@@ -206,11 +206,14 @@ class Level:
             if self.player.rect.colliderect(item.rect):
                 if isinstance(item, CameoSprite):
                     self.playing_state.game.save_manager.unlock_secret(item.secret_id)
-                    item.kill()
 
-                elif isinstance(item, TimeBonusSprite):
-                    self.playing_state.start_time += item.bonus_ms
-                    item.kill()
+                self.playing_state.start_time += item.bonus_ms
+
+                current_time = pygame.time.get_ticks()
+                if current_time - self.playing_state.start_time < 0:
+                    self.playing_state.start_time = current_time # make it 00:00:00 prevent time to be negative or 59:59:99
+
+                item.kill()
 
     def check_hazards(self):
         if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
