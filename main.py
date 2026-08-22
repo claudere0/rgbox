@@ -1,12 +1,14 @@
 from scripts.settings import *
 from scripts.states import *
 from scripts.save_manager import SaveManager
+from scripts.audio import AudioManager
 
 class Game:
     def __init__(self):
         pygame.init()
 
         self.save_manager = SaveManager()
+        self.audio = AudioManager()
 
         is_fullscreen = self.save_manager.data["settings"]["fullscreen"]
         flags = pygame.FULLSCREEN if is_fullscreen else 0

@@ -77,7 +77,7 @@ class Level:
 
         for obj in tmx_map.get_layer_by_name('objects'):
             if obj.name == 'box':
-                self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.all_sprites)
+                self.player = Player((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites, self.playing_state.game.audio, self.all_sprites)
                 self.bg_color = WHITE if not any(self.player.pigments.values()) else BLACK
 
                 self.start_pos = (obj.x, obj.y)

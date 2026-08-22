@@ -294,8 +294,9 @@ class DeathState(PlayerState):
             self.player.needs_respawn = True
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, collision_group_check, *groups):
+    def __init__(self, pos, surf, collision_group_check, audio, *groups):
         super().__init__(*groups)
+        self.audio = audio
         self.base_image = pygame.Surface(surf)
         self.base_image.fill(WHITE)
         self.image = self.base_image.copy()
