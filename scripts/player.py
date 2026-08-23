@@ -449,6 +449,9 @@ class Player(pygame.sprite.Sprite):
         self.display_rect = self.rect.copy()
         self.rect.center = old_center
 
+        self.can_dash = self.pigments['R']
+        self.can_double_jump = self.pigments['G']
+
     def get_all_sprites_group(self):
         for g in self.groups():
             if type(g).__name__ == 'AllSprites':
