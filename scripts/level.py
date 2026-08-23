@@ -250,14 +250,29 @@ class Level:
                             self.player.audio.play_sfx('color') 
                             self.player.pigments[color_key] = True
                             station.station_colors[color_key] = False
-                            self.player.jump = True
+
+                            self.player.direction.y = -716 # half jump 1012 / square root of 2
+                            self.player.scale_x = 0.75
+                            self.player.scale_y = 1.25
+                            self.player.rect.bottom -= 1
+
+                            self.player.change_state(PlayerStateID.JUMP)
+
                             self.player.update_color_and_size()
                             self.update_stantions_to_fit_world()
+
                         elif self.player.pigments[color_key] and not station.station_colors[color_key]:
                             self.player.audio.play_sfx('color') 
                             self.player.pigments[color_key] = False
                             station.station_colors[color_key] = True
-                            self.player.jump = True
+
+                            self.player.direction.y = -716 # half jump 1012 / square root of 2
+                            self.player.scale_x = 0.75
+                            self.player.scale_y = 1.25
+                            self.player.rect.bottom -= 1
+
+                            self.player.change_state(PlayerStateID.JUMP)
+
                             self.player.update_color_and_size()
                             self.update_stantions_to_fit_world()
 
