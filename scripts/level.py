@@ -202,8 +202,9 @@ class Level:
                         self.player.can_double_jump = self.player.pigments['G']
 
             elif isinstance(trigger, TimerButton):
-                self.playing_state.game.audio.play_sfx('secret')
                 if self.player.rect.colliderect(trigger.rect.inflate(8, 8)):
+                    if not trigger.pressed:
+                        self.playing_state.game.audio.play_sfx('secret')
                     trigger.press()
 
         for item in self.collectible_sprites:
