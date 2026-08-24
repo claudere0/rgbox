@@ -327,4 +327,5 @@ class Level:
         for sprite in self.all_sprites:
             if isinstance(sprite, TextSprite):
                 sprite.image = sprite.white_surf if has_colors else sprite.black_surf
+
         self.all_sprites.draw(self.player.rect.center)
