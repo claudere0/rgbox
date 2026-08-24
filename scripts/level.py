@@ -22,6 +22,8 @@ class Level:
         self.setup(tmx_map)
 
     def setup(self, tmx_map):
+        self.map_height = tmx_map.height * TILE_SIZE 
+
         tileset_img = pygame.image.load(join('graphics', 'tilesets', 'demo_tiles.png')).convert_alpha()
 
         self.black_tile_image = pygame.Surface((TILE_SIZE, TILE_SIZE), pygame.SRCALPHA)
@@ -230,6 +232,9 @@ class Level:
                 if self.player.rect.colliderect(hazard.rect):
                     self.player.change_state(PlayerStateID.DEATH)
                     break
+
+            if self.player.rect.top > self.map_height:
+                self.player.change_state(PlayerStateID.DEATH)
 
     def update_colors(self, dt):
         just_pressed = pygame.key.get_just_pressed()

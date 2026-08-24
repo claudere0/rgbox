@@ -1,3 +1,4 @@
+import pygame
 from enum import Enum, auto
 from pytmx.util_pygame import load_pygame
 from os.path import join
