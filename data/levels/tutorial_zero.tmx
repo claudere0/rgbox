@@ -318,7 +318,7 @@ match, and passable
 if your colors match</property>
    </properties>
   </object>
-  <object id="30" name="text" x="3262.96" y="1166.77" width="240" height="40">
+  <object id="30" name="text" x="3264" y="1168" width="240" height="40">
    <properties>
     <property name="font_size" type="int" value="36"/>
     <property name="text">GREEN gives DOUBLE JUMP 
@@ -397,7 +397,7 @@ press 'E'
 WALL SLIDE/JUMP</property>
    </properties>
   </object>
-  <object id="42" name="text" x="1122" y="3072" width="240" height="32">
+  <object id="42" name="text" x="1120" y="3072" width="240" height="32">
    <properties>
     <property name="font_size" type="int" value="36"/>
     <property name="text">Try holding the left 
@@ -406,7 +406,7 @@ against the wall, you
 will slowly slide</property>
    </properties>
   </object>
-  <object id="43" name="text" x="1856.67" y="3414.54" width="240" height="32">
+  <object id="43" name="text" x="1856" y="3408" width="240" height="32">
    <properties>
     <property name="font_size" type="int" value="36"/>
     <property name="text">Now try to jump 

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tutorial_zero.tmx",
+    "activeFile": "tutorial_one.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -19,8 +19,8 @@
             "scale": 0.6643,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1138.040042149631,
-                "y": 1104.1698027999398
+                "x": 960.4094535601384,
+                "y": 768.4780972452204
             }
         },
         "level_three.tmx": {
@@ -30,7 +30,7 @@
             "scale": 0.3724,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 961.3319011815249,
+                "x": 961.3319011815252,
                 "y": 769.3340494092374
             }
         },
@@ -52,8 +52,8 @@
             "scale": 0.9695,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1352.2434244455903,
-                "y": 506.9623517276947
+                "x": 960.2888086642599,
+                "y": 767.9216090768437
             }
         },
         "tutorial_one.tmx": {
@@ -63,19 +63,19 @@
             "scale": 0.3925,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1258.5987261146497,
-                "y": 538.8535031847134
+                "x": 1309.5541401273886,
+                "y": 740.127388535032
             }
         },
         "tutorial_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 2.1945,
-            "selectedLayer": 3,
+            "scale": 0.1392,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 3634.085213032581,
-                "y": 415.35657325131
+                "x": 3211.206896551724,
+                "y": 298.13218390804604
             }
         }
     },
@@ -95,12 +95,12 @@
     "project": "untitled.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "tutorial_zero.tmx",
         "level_three.tmx",
         "level_two.tmx",
         "level_one.tmx",
         "level_zero.tmx",
         "tutorial_one.tmx",
-        "tutorial_zero.tmx",
         "demo_tiles.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
