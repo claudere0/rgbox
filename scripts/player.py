@@ -414,7 +414,7 @@ class Player(pygame.sprite.Sprite):
             if isinstance(sprite, ColorDoor) and sprite.is_passable(self.pigments):
                 continue
             valid_collision_rects.append(sprite.rect)
-        collide_rects = valid_collision_rects # before #51 commit was -> collide_rects = [sprite.rect for sprite in self.collision_sprites]
+        collide_rects = valid_collision_rects
 
         # pygame.draw.rect(self.display_surface, YELLOW, floor_rect)
         # pygame.draw.rect(self.display_surface, YELLOW, right_rect)
@@ -425,9 +425,11 @@ class Player(pygame.sprite.Sprite):
         self.on_surface['left'] = True if left_rect.collidelist(collide_rects) >= 0 else False
         # print(self.on_surface)
 
-        if self.on_surface['floor'] or self.on_surface['left'] or self.on_surface['right']:
+        if self.on_surface['floor']:
             self.can_double_jump = self.pigments['G']
             self.can_dash = self.pigments['R']
+        elif self.on_surface['left'] or self.on_surface['right']:
+            self.can_dash = self.pigments['R'] #and only dash also can reload by walls
 
     def update_color_and_size(self):
         count = sum(self.pigments.values())
