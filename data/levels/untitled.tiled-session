@@ -16,11 +16,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2546,
+            "scale": 0.0796,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1227.4155538098978,
-                "y": 1064.4147682639436
+                "x": 6790.201005025126,
+                "y": 4170.854271356783
             }
         },
         "level_three.tmx": {
@@ -41,7 +41,7 @@
             "scale": 0.5855,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 960.7173356105892,
+                "x": 959.0093936806148,
                 "y": 768.5738684884714
             }
         },
@@ -49,22 +49,22 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.0674,
-            "selectedLayer": 1,
+            "scale": 0.259,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": -823.4421364985164,
-                "y": 3724.035608308605
+                "x": 1113.8996138996138,
+                "y": 2220.07722007722
             }
         },
         "tutorial_one.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 1.5833,
+            "scale": 0.2771,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 5277.900587380787,
-                "y": 1381.9238299753679
+                "x": 3354.3846986647413,
+                "y": 1248.6466979429808
             }
         },
         "tutorial_zero.tmx": {
