@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tutorial_one.tmx",
+    "activeFile": "level_zero.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -16,11 +16,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.6643,
+            "scale": 0.2546,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1062.0201716092129,
-                "y": 833.9605599879571
+                "x": 1227.4155538098978,
+                "y": 1064.4147682639436
             }
         },
         "level_three.tmx": {
@@ -41,7 +41,7 @@
             "scale": 0.5855,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 959.0093936806147,
+                "x": 960.7173356105892,
                 "y": 768.5738684884714
             }
         },
@@ -49,33 +49,33 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.9695,
-            "selectedLayer": 3,
+            "scale": 0.0674,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1347.6018566271273,
-                "y": 777.720474471377
+                "x": -823.4421364985164,
+                "y": 3724.035608308605
             }
         },
         "tutorial_one.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.3625,
+            "scale": 1.5833,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 434.48275862068976,
-                "y": 273.103448275862
+                "x": 5277.900587380787,
+                "y": 1381.9238299753679
             }
         },
         "tutorial_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.5313,
+            "scale": 0.0812,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 3865.047995482778,
-                "y": 1204.592508940335
+                "x": 3516.009852216749,
+                "y": 2475.3694581280793
             }
         }
     },
@@ -85,8 +85,6 @@
     "map.tileHeight": 64,
     "map.tileWidth": 64,
     "openFiles": [
-        "tutorial_zero.tmx",
-        "tutorial_one.tmx",
         "level_zero.tmx",
         "level_one.tmx",
         "level_two.tmx",
@@ -95,11 +93,11 @@
     "project": "untitled.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "tutorial_zero.tmx",
         "level_three.tmx",
         "level_two.tmx",
         "level_one.tmx",
         "level_zero.tmx",
+        "tutorial_zero.tmx",
         "tutorial_one.tmx",
         "demo_tiles.tsx"
     ],
