@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_zero.tmx",
+    "activeFile": "level_two.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -16,11 +16,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.0796,
+            "scale": 0.2734,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 6790.201005025126,
-                "y": 4170.854271356783
+                "x": 11527.066569129482,
+                "y": 830.2852962692027
             }
         },
         "level_three.tmx": {
@@ -38,44 +38,44 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.5855,
+            "scale": 0.1997,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 959.0093936806148,
-                "y": 768.5738684884714
+                "x": 2776.6649974962447,
+                "y": 1086.629944917376
             }
         },
         "level_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.259,
+            "scale": 0.2284,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1113.8996138996138,
-                "y": 2220.07722007722
+                "x": 996.0595446584941,
+                "y": 5683.012259194396
             }
         },
         "tutorial_one.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2771,
+            "scale": 0.2062,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 3354.3846986647413,
-                "y": 1248.6466979429808
+                "x": 5341.901066925315,
+                "y": 1673.1328806983513
             }
         },
         "tutorial_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.0812,
+            "scale": 0.6639,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 3516.009852216749,
-                "y": 2475.3694581280793
+                "x": 3364.2114776321732,
+                "y": 748.6067178791986
             }
         }
     },
@@ -85,20 +85,21 @@
     "map.tileHeight": 64,
     "map.tileWidth": 64,
     "openFiles": [
+        "tutorial_zero.tmx",
+        "tutorial_one.tmx",
         "level_zero.tmx",
         "level_one.tmx",
-        "level_two.tmx",
-        "level_three.tmx"
+        "level_two.tmx"
     ],
     "project": "untitled.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "level_three.tmx",
-        "level_two.tmx",
-        "level_one.tmx",
-        "level_zero.tmx",
         "tutorial_zero.tmx",
         "tutorial_one.tmx",
+        "level_zero.tmx",
+        "level_one.tmx",
+        "level_two.tmx",
+        "level_three.tmx",
         "demo_tiles.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="120" height="36" tilewidth="64" tileheight="64" infinite="0" nextlayerid="5" nextobjectid="75">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="120" height="36" tilewidth="64" tileheight="64" infinite="0" nextlayerid="5" nextobjectid="83">
  <tileset firstgid="1" source="demo_tiles.tsx"/>
  <layer id="1" name="background" width="120" height="36">
   <data encoding="csv">
@@ -343,52 +343,52 @@ if you GREEN</property>
     <property name="speed" type="int" value="0"/>
    </properties>
   </object>
-  <object id="66" name="color_door" gid="35" x="7104" y="1984" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="67" name="color_door" gid="35" x="7168" y="1984" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="68" name="color_door" gid="35" x="7232" y="1984" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="69" name="color_door" gid="35" x="7296" y="1984" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="70" name="color_door" gid="34" x="7360" y="2112" width="64" height="64">
-   <properties>
-    <property name="color" value="R"/>
-   </properties>
-  </object>
-  <object id="71" name="color_door" gid="34" x="7360" y="2048" width="64" height="64">
-   <properties>
-    <property name="color" value="R"/>
-   </properties>
-  </object>
-  <object id="72" name="color_door" gid="34" x="7360" y="2240" width="64" height="64">
-   <properties>
-    <property name="color" value="R"/>
-   </properties>
-  </object>
-  <object id="73" name="color_door" gid="34" x="7360" y="2176" width="64" height="64">
-   <properties>
-    <property name="color" value="R"/>
-   </properties>
-  </object>
   <object id="74" name="text" x="6176.48" y="577.41" width="256" height="32">
    <properties>
     <property name="font_size" type="int" value="36"/>
     <property name="text">use BLUE ability 
 to wall slide to 
 avoid static lasers</property>
+   </properties>
+  </object>
+  <object id="75" name="color_door" gid="38" x="7104" y="1984" width="64" height="64">
+   <properties>
+    <property name="color" value="C"/>
+   </properties>
+  </object>
+  <object id="76" name="color_door" gid="38" x="7168" y="1984" width="64" height="64">
+   <properties>
+    <property name="color" value="C"/>
+   </properties>
+  </object>
+  <object id="77" name="color_door" gid="38" x="7232" y="1984" width="64" height="64">
+   <properties>
+    <property name="color" value="C"/>
+   </properties>
+  </object>
+  <object id="78" name="color_door" gid="38" x="7296" y="1984" width="64" height="64">
+   <properties>
+    <property name="color" value="C"/>
+   </properties>
+  </object>
+  <object id="79" name="color_door" gid="39" x="7360" y="2112" width="64" height="64">
+   <properties>
+    <property name="color" value="M"/>
+   </properties>
+  </object>
+  <object id="80" name="color_door" gid="39" x="7360" y="2048" width="64" height="64">
+   <properties>
+    <property name="color" value="M"/>
+   </properties>
+  </object>
+  <object id="81" name="color_door" gid="39" x="7360" y="2240" width="64" height="64">
+   <properties>
+    <property name="color" value="M"/>
+   </properties>
+  </object>
+  <object id="82" name="color_door" gid="39" x="7360" y="2176" width="64" height="64">
+   <properties>
+    <property name="color" value="M"/>
    </properties>
   </object>
  </objectgroup>
