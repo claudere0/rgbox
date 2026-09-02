@@ -16,66 +16,66 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2734,
+            "scale": 0.2842,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 7681.053401609364,
-                "y": 768.1053401609364
+                "x": 10541.871921182266,
+                "y": 1354.679802955665
             }
         },
         "level_three.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.0969,
-            "selectedLayer": 1,
+            "scale": 0.1411,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 2425.180598555212,
-                "y": 3684.2105263157896
+                "x": 3097.0942593905033,
+                "y": 4649.184975194897
             }
         },
         "level_two.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.7474,
-            "selectedLayer": 3,
+            "scale": 0.1413,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 3359.6467754883597,
-                "y": 1151.993577736152
+                "x": 3757.96178343949,
+                "y": 1167.7282377919323
             }
         },
         "level_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.5269,
-            "selectedLayer": 3,
+            "scale": 0.2568,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 480.16701461377875,
-                "y": 3072.689314860505
+                "x": 120.71651090342675,
+                "y": 4785.82554517134
             }
         },
         "tutorial_one.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2062,
-            "selectedLayer": 3,
+            "scale": 0.4058,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 3840.931134820563,
-                "y": 1154.2192046556738
+                "x": 6791.5229176934445,
+                "y": 1887.6293740758995
             }
         },
         "tutorial_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2683,
-            "selectedLayer": 3,
+            "scale": 0.2715,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1196.4219157659336,
-                "y": 898.2482295937383
+                "x": 1790.0552486187844,
+                "y": 2640.883977900553
             }
         }
     },

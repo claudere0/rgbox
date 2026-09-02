@@ -75,6 +75,16 @@ class Level:
         for x, y, surf in tmx_map.get_layer_by_name('terrain').tiles():
             Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
 
+        is_minimalist = self.playing_state.game.save_manager.data["settings"].get("minimalist", False)
+
+        if 'terrain_colored' in [layer.name for layer in tmx_map.layers]:
+            for x, y, surf in tmx_map.get_layer_by_name('terrain_colored').tiles():
+                if is_minimalist:
+                    Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites, self.terrain_sprites)
+
+                else:
+                    Sprite((x * TILE_SIZE,y * TILE_SIZE), surf, self.all_sprites, self.collision_sprites)
+
         lasers_dict = {} 
 
         for obj in tmx_map.get_layer_by_name('objects'):

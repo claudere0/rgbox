@@ -13,9 +13,10 @@ class SaveManager:
             "best_times": {},
             "secrets_found": [],
             "settings": {
-                "music_volume": 1.0,
-                "sfx_volume": 1.0,
-                "fullscreen": False
+                "music_volume": 50.0,
+                "sfx_volume": 50.0,
+                "fullscreen": False,
+                "minimalist": False
             }
         }
 

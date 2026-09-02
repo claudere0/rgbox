@@ -351,7 +351,7 @@ class LevelCompleteState(State):
 class SettingsState(State):
     def __init__(self, game):
         super().__init__(game)
-        self.options = ["FULLSCREEN", "MUSIC VOL", "SFX VOL", "BACK"]
+        self.options = ["FULLSCREEN", "MINIMALIST", "MUSIC VOL", "SFX VOL", "BACK"]
         self.selected_index = 0
         self.font_large = pygame.font.SysFont('courier', 48, bold=True)
         self.font_huge = pygame.font.SysFont('courier', 64, bold=True)
@@ -388,6 +388,11 @@ class SettingsState(State):
                     self.game.save_manager.save()
                     pygame.display.toggle_fullscreen()
 
+                elif selected == "MINIMALIST":
+                    current_val = self.game.save_manager.data["settings"].get("minimalist", False)
+                    self.game.save_manager.data["settings"]["minimalist"] = not current_val
+                    self.game.save_manager.save()
+
                 elif selected == "BACK":
                     self.game.change_state(StateID.MENU)
 
@@ -403,6 +408,10 @@ class SettingsState(State):
             if option == "FULLSCREEN":
                 is_on = self.game.save_manager.data["settings"]["fullscreen"]
                 display_text = f"FULLSCREEN [{'ON' if is_on else 'OFF'}]"
+
+            elif option == "MINIMALIST":
+                is_on = self.game.save_manager.data["settings"].get("minimalist", False)
+                display_text = f"MINIMALIST [{'ON' if is_on else 'OFF'}]"
 
             elif option == "MUSIC VOL":
                 vol = self.game.save_manager.data["settings"].get("music_volume", 100)
