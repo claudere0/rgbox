@@ -11,7 +11,7 @@ class Game:
         self.audio = AudioManager()
 
         is_fullscreen = self.save_manager.data["settings"]["fullscreen"]
-        flags = pygame.FULLSCREEN if is_fullscreen else 0
+        flags = pygame.FULLSCREEN | pygame.SCALED if is_fullscreen else pygame.SCALED
 
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), flags)
         pygame.display.set_caption('rgbox')

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_three.tmx",
+    "activeFile": "tutorial_zero.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -19,8 +19,8 @@
             "scale": 0.2734,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 9665.32553035845,
-                "y": 1036.942209217264
+                "x": 7681.053401609364,
+                "y": 768.1053401609364
             }
         },
         "level_three.tmx": {
@@ -41,8 +41,8 @@
             "scale": 0.7474,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 5810.810810810811,
-                "y": 814.1557398983141
+                "x": 3359.6467754883597,
+                "y": 1151.993577736152
             }
         },
         "level_zero.tmx": {
@@ -52,8 +52,8 @@
             "scale": 0.5269,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 594.989561586639,
-                "y": 3149.5539950654775
+                "x": 480.16701461377875,
+                "y": 3072.689314860505
             }
         },
         "tutorial_one.tmx": {
@@ -63,19 +63,19 @@
             "scale": 0.2062,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 5341.901066925315,
-                "y": 1690.1066925315229
+                "x": 3840.931134820563,
+                "y": 1154.2192046556738
             }
         },
         "tutorial_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.6639,
+            "scale": 0.2683,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 3790.480494050309,
-                "y": 728.2723301702064
+                "x": 1196.4219157659336,
+                "y": 898.2482295937383
             }
         }
     },
@@ -95,12 +95,12 @@
     "project": "untitled.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "tutorial_zero.tmx",
-        "tutorial_one.tmx",
-        "level_zero.tmx",
-        "level_one.tmx",
-        "level_two.tmx",
         "level_three.tmx",
+        "level_two.tmx",
+        "level_one.tmx",
+        "level_zero.tmx",
+        "tutorial_one.tmx",
+        "tutorial_zero.tmx",
         "demo_tiles.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",

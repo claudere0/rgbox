@@ -74,7 +74,7 @@ class MenuState(State):
                 text = option
                 
             img = self.font_large.render(text, True, color)
-            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 50 + i * 80))
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 64 + i * 64))
             screen.blit(img, rect)
 
 # LEVEL_SELECT -> PLAYING or MENU
@@ -108,7 +108,7 @@ class LevelSelectState(State):
         screen.fill(BLUE)
 
         center_y = WINDOW_HEIGHT / 2
-        spacing = 80
+        spacing = 96
         
         for i, level_name in enumerate(LEVEL_ORDER):
             offset = i - self.selected_index 
@@ -137,7 +137,7 @@ class LevelSelectState(State):
                         time_text = "NOT COMPLETED YET"
                         
                     time_img = self.font_small.render(time_text, True, WHITE)
-                    time_rect = time_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + 40))
+                    time_rect = time_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + 48))
                     screen.blit(time_img, time_rect)
                 
             else:
@@ -213,10 +213,10 @@ class PlayingState(State):
             minutes = (current_time_ms // 60000) % 60
             millis = (current_time_ms % 1000) // 10
             
-            font = pygame.font.SysFont(None, 36)
+            font = pygame.font.SysFont('courier', 32)
 
-            time_text = font.render(f"TIME: {minutes:02d}:{seconds:02d}:{millis:02d}", True, (255, 0, 0))
-            screen.blit(time_text, (20, 20))
+            time_text = font.render(f"TIME: {minutes:02d}:{seconds:02d}:{millis:02d}", True, (0, 255, 0))
+            screen.blit(time_text, (screen.width - (time_text.width + 64), 64)) #y = screen.height - (time_text.height + 64))
 
 # PAUSE -> PLAYING/SETTINGS/MENU
 
@@ -262,7 +262,7 @@ class PauseState(State):
         screen.blit(self.overlay, (0, 0))
 
         title = self.font_huge.render("PAUSED", True, WHITE)
-        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 120))
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 64))
         screen.blit(title, title_rect)
 
         for i, option in enumerate(self.options):
@@ -274,7 +274,7 @@ class PauseState(State):
                 text = option
                 
             img = self.font_large.render(text, True, color)
-            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 60))
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 64))
             screen.blit(img, rect)
 
 # LEVEL_COMPLETE -> play next level PLAYING(retry or load next level) or quit to MENU
@@ -321,7 +321,7 @@ class LevelCompleteState(State):
         screen.fill(YELLOW)
 
         title = self.font_huge.render("LEVEL COMPLETE", True, BLACK)
-        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 150))
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 96))
         screen.blit(title, title_rect)
 
         playing_state = self.game.states[StateID.PLAYING]
@@ -331,7 +331,7 @@ class LevelCompleteState(State):
         millis = (run_time % 1000) // 10
         
         time_text = self.font_small.render(f"YOUR TIME: {minutes:02d}:{seconds:02d}:{millis:02d}", True, RED)
-        time_rect = time_text.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 70))
+        time_rect = time_text.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 32))
         screen.blit(time_text, time_rect)
 
         for i, option in enumerate(self.options):
@@ -343,7 +343,7 @@ class LevelCompleteState(State):
                 text = option
                 
             img = self.font_large.render(text, True, color)
-            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 50 + i * 60))
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 32 + i * 64))
             screen.blit(img, rect)
 
 # SETTINGS -> go back to MENU/PAUSE
@@ -380,7 +380,7 @@ class SettingsState(State):
         screen.fill(BLACK)
 
         title = self.font_huge.render("SETTINGS", True, WHITE)
-        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 120))
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 128))
         screen.blit(title, title_rect)
 
         for i, option in enumerate(self.options):
@@ -399,7 +399,7 @@ class SettingsState(State):
                 text = display_text
 
             img = self.font_large.render(text, True, color)
-            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 80))
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 64))
             screen.blit(img, rect)
 
 # SECRETS -> MENU
@@ -408,8 +408,7 @@ class SecretsState(State):
     def __init__(self, game):
         super().__init__(game)
         self.font_title = pygame.font.SysFont('courier', 64, bold=True)
-        self.font_name = pygame.font.SysFont('courier', 32, bold=True)
-        self.font_small = pygame.font.SysFont('courier', 24)
+        self.font_name = pygame.font.SysFont('courier', 32)
 
         self.cameo_names = ["NINJA", "ELUETTE", "RAPPY", "NANAS"]
 
@@ -433,8 +432,8 @@ class SecretsState(State):
         title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, 80))
         screen.blit(title, title_rect)
 
-        instruction = self.font_small.render("PRESS ESC TO RETURN", True, WHITE)
-        inst_rect = instruction.get_frect(center=(WINDOW_WIDTH / 2, 130))
+        instruction = self.font_name.render("PRESS ESC TO RETURN", True, WHITE)
+        inst_rect = instruction.get_frect(center=(WINDOW_WIDTH / 2, 128))
         screen.blit(instruction, inst_rect)
 
         start_x = WINDOW_WIDTH / 2 - 300
@@ -462,7 +461,7 @@ class SecretsState(State):
                 q_rect = q_text.get_frect(center=(x, y))
                 screen.blit(q_text, q_rect)
 
-                name_text = self.font_name.render("???", True, (100, 100, 100))
+                name_text = self.font_name.render("???", True, WHITE)
 
-            name_rect = name_text.get_frect(center=(x, y + 90))
+            name_rect = name_text.get_frect(center=(x, y + 96))
             screen.blit(name_text, name_rect)
