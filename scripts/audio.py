@@ -19,13 +19,13 @@ class AudioManager:
 
     def load_sfx(self):
         sfx_files = {
-            'jump': 'jump.wav',
-            'dash': 'dash.wav',
-            'death': 'death.wav',
-            'color': 'color_change.wav',
+            'jump': 'jump.mp3',
+            'dash': 'dash.mp3',
+            'death': 'death_arcade.wav', #can change to death_bubble.mp3
+            'color': 'color_change.mp3',
             'secret': 'secret.wav',
             'portal': 'portal.wav'
-        }
+            , 'button': 'button_press_unpress.mp3'        }
         
         for name, filename in sfx_files.items():
             path = join('audio', 'sfx', filename)

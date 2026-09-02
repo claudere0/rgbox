@@ -216,7 +216,7 @@ class Level:
             elif isinstance(trigger, TimerButton):
                 if self.player.rect.colliderect(trigger.rect.inflate(8, 8)):
                     if not trigger.pressed:
-                        self.playing_state.game.audio.play_sfx('secret')
+                        self.playing_state.game.audio.play_sfx('button')
                     trigger.press()
 
         for item in self.collectible_sprites:

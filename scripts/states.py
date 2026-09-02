@@ -170,6 +170,7 @@ class PlayingState(State):
         self.current_stage = Level(tmx_map, self)
 
         self.start_time = pygame.time.get_ticks()
+        self.game.audio.play_music('magiksolo-investigation-puzzle.mp3', fade_ms=1000)
         self.game.change_state(StateID.PLAYING)
 
     def resume_timer(self):
