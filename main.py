@@ -8,7 +8,7 @@ class Game:
         pygame.init()
 
         self.save_manager = SaveManager()
-        self.audio = AudioManager()
+        self.audio = AudioManager(self)
 
         is_fullscreen = self.save_manager.data["settings"]["fullscreen"]
         flags = pygame.FULLSCREEN | pygame.SCALED if is_fullscreen else pygame.SCALED

@@ -351,7 +351,7 @@ class LevelCompleteState(State):
 class SettingsState(State):
     def __init__(self, game):
         super().__init__(game)
-        self.options = ["FULLSCREEN", "BACK"]
+        self.options = ["FULLSCREEN", "MUSIC VOL", "SFX VOL", "BACK"]
         self.selected_index = 0
         self.font_large = pygame.font.SysFont('courier', 48, bold=True)
         self.font_huge = pygame.font.SysFont('courier', 64, bold=True)
@@ -362,17 +362,32 @@ class SettingsState(State):
                 self.selected_index = (self.selected_index - 1) % len(self.options)
             elif event.key == pygame.K_DOWN:
                 self.selected_index = (self.selected_index + 1) % len(self.options)
+
+            elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                selected = self.options[self.selected_index]
+                step = -10 if event.key == pygame.K_LEFT else 10
+                if selected == "MUSIC VOL":
+                    vol = self.game.save_manager.data["settings"].get("music_volume", 100)
+                    new_vol = max(0, min(100, vol + step))
+                    self.game.save_manager.data["settings"]["music_volume"] = new_vol
+                    self.game.save_manager.save()
+                    self.game.audio.update_music_volume()
+
+                elif selected == "SFX VOL":
+                    vol = self.game.save_manager.data["settings"].get("sfx_volume", 100)
+                    new_vol = max(0, min(100, vol + step))
+                    self.game.save_manager.data["settings"]["sfx_volume"] = new_vol
+                    self.game.save_manager.save()
+                    self.game.audio.play_sfx('jump')
+
             elif event.key == pygame.K_RETURN:
                 selected = self.options[self.selected_index]
-                
                 if selected == "FULLSCREEN":
                     current_val = self.game.save_manager.data["settings"]["fullscreen"]
-                    new_val = not current_val
-                    self.game.save_manager.data["settings"]["fullscreen"] = new_val
+                    self.game.save_manager.data["settings"]["fullscreen"] = not current_val
                     self.game.save_manager.save()
-
                     pygame.display.toggle_fullscreen()
-                    
+
                 elif selected == "BACK":
                     self.game.change_state(StateID.MENU)
 
@@ -380,26 +395,27 @@ class SettingsState(State):
         screen.fill(BLACK)
 
         title = self.font_huge.render("SETTINGS", True, WHITE)
-        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 128))
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 160))
         screen.blit(title, title_rect)
 
         for i, option in enumerate(self.options):
-
             display_text = option
             if option == "FULLSCREEN":
                 is_on = self.game.save_manager.data["settings"]["fullscreen"]
-                status = "[ON]" if is_on else "[OFF]"
-                display_text = f"FULLSCREEN {status}"
+                display_text = f"FULLSCREEN [{'ON' if is_on else 'OFF'}]"
 
-            if i == self.selected_index:
-                color = YELLOW
-                text = f"> {display_text} <" 
-            else:
-                color = WHITE
-                text = display_text
+            elif option == "MUSIC VOL":
+                vol = self.game.save_manager.data["settings"].get("music_volume", 100)
+                display_text = f"MUSIC VOL < {vol}% >"
 
+            elif option == "SFX VOL":
+                vol = self.game.save_manager.data["settings"].get("sfx_volume", 100)
+                display_text = f"SFX VOL   < {vol}% >"
+
+            color = YELLOW if i == self.selected_index else WHITE
+            text = f"> {display_text} <" if i == self.selected_index else display_text
             img = self.font_large.render(text, True, color)
-            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + i * 64))
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 24 + i * 64))
             screen.blit(img, rect)
 
 # SECRETS -> MENU

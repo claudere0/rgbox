@@ -3,7 +3,8 @@ import os
 from os.path import join
 
 class AudioManager:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         pygame.mixer.pre_init(44100, -16, 2, 512)
         pygame.mixer.init()
         
@@ -36,17 +37,25 @@ class AudioManager:
 
     def play_sfx(self, name):
         if name in self.sfx and self.sfx[name]:
-            self.sfx[name].set_volume(self.sfx_volume)
+            vol = self.game.save_manager.data["settings"].get("sfx_volume", 100) / 100.0
+            self.sfx[name].set_volume(vol)
             self.sfx[name].play()
 
     def play_music(self, filename, loops=-1, fade_ms=2000):
         path = join(self.music_path, filename)
         if os.path.exists(path):
             pygame.mixer.music.load(path)
-            # fade_ms плавно наращивает громкость
-            pygame.mixer.music.play(loops=loops, fade_ms=fade_ms)
+
+            vol = self.game.save_manager.data["settings"].get("music_volume", 100) / 100.0
+            pygame.mixer.music.set_volume(vol)
+
+            pygame.mixer.music.play(-1, fade_ms=fade_ms)
         else:
             print(f"Warning: Music missing -> {path}")
+
+    def update_music_volume(self):
+        vol = self.game.save_manager.data["settings"].get("music_volume", 100) / 100.0
+        pygame.mixer.music.set_volume(vol)
 
     def stop_music(self, fade_ms=1000):
         pygame.mixer.music.fadeout(fade_ms)
