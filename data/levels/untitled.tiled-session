@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_two.tmx",
+    "activeFile": "level_three.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -19,41 +19,41 @@
             "scale": 0.2734,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 11527.066569129482,
-                "y": 830.2852962692027
+                "x": 9665.32553035845,
+                "y": 1036.942209217264
             }
         },
         "level_three.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.3724,
-            "selectedLayer": 3,
+            "scale": 0.0969,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 959.9892588614391,
-                "y": 767.9914070891514
+                "x": 2425.180598555212,
+                "y": 3684.2105263157896
             }
         },
         "level_two.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.1997,
+            "scale": 0.7474,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 2776.6649974962447,
-                "y": 1086.629944917376
+                "x": 5810.810810810811,
+                "y": 814.1557398983141
             }
         },
         "level_zero.tmx": {
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.2284,
+            "scale": 0.5269,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 996.0595446584941,
-                "y": 5683.012259194396
+                "x": 594.989561586639,
+                "y": 3149.5539950654775
             }
         },
         "tutorial_one.tmx": {
@@ -64,7 +64,7 @@
             "selectedLayer": 3,
             "viewCenter": {
                 "x": 5341.901066925315,
-                "y": 1673.1328806983513
+                "y": 1690.1066925315229
             }
         },
         "tutorial_zero.tmx": {
@@ -74,8 +74,8 @@
             "scale": 0.6639,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 3364.2114776321732,
-                "y": 748.6067178791986
+                "x": 3790.480494050309,
+                "y": 728.2723301702064
             }
         }
     },
@@ -89,7 +89,8 @@
         "tutorial_one.tmx",
         "level_zero.tmx",
         "level_one.tmx",
-        "level_two.tmx"
+        "level_two.tmx",
+        "level_three.tmx"
     ],
     "project": "untitled.tiled-project",
     "property.type": "string",
