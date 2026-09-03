@@ -400,7 +400,6 @@ class Player(pygame.sprite.Sprite):
 
         self.display_rect = self.image.get_frect(center=self.rect.center)
 
-        print(self.current_state)
 
     def update_timers(self):
         for timer in self.timers.values():
@@ -448,9 +447,8 @@ class Player(pygame.sprite.Sprite):
         self.base_image.fill(color)
         self.image = self.base_image.copy()
 
-        self.rect = self.image.get_frect()
+        self.rect = self.image.get_frect(center=old_center)
         self.display_rect = self.rect.copy()
-        self.rect.center = old_center
 
         self.can_dash = self.pigments['R']
         self.can_double_jump = self.pigments['G']
