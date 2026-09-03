@@ -65,7 +65,7 @@ class Level:
             white_surf.blit(tileset_img, (0, 0), (i * 128, 640, 128, 128))
 
             self.time_bonus_surfaces.append({'black': black_surf, 'white': white_surf})
-            
+
         self.cameo_surfaces = []
         for i in range(4):
             cameo_surf = pygame.Surface((128, 128), pygame.SRCALPHA)
@@ -179,6 +179,7 @@ class Level:
                 sprite.image = pygame.Surface(sprite.base_rect.size)
                 sprite.image.fill((255, 0, 0))
                 sprite.rect = sprite.base_rect.copy()
+
         for sprite in self.hazard_sprites:
             if isinstance(sprite, Laser):
                 sprite.active = True
@@ -219,6 +220,7 @@ class Level:
 
                 self.playing_state.start_time += item.bonus_ms
                 current_time = pygame.time.get_ticks()
+
                 if current_time - self.playing_state.start_time < 0:
                     self.playing_state.start_time = current_time 
                 item.kill()
@@ -270,16 +272,19 @@ class Level:
                     if self.player.rect.move(0, 16).colliderect(station.rect):
                         dx = self.player.rect.centerx - station.rect.left
                         slot_width = station.rect.width / 3
-                        
+
                         if dx < slot_width:
                             color_key = 'R'
+
                         elif dx < slot_width * 2:
                             color_key = 'G'
+
                         else:
                             color_key = 'B'
-                            
+
                         if not self.player.pigments[color_key] and station.station_colors[color_key]:
                             self._toggle_color(station, color_key, True)
+
                         elif self.player.pigments[color_key] and not station.station_colors[color_key]:
                             self._toggle_color(station, color_key, False)
 

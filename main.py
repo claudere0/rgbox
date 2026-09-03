@@ -1,4 +1,3 @@
-import asyncio
 from scripts.settings import *
 from scripts.states import *
 from scripts.save_manager import SaveManager
@@ -30,7 +29,6 @@ class Game:
         }
 
         self.current_state = self.states[StateID.MENU]
-        # self.current_state = self.states[StateID.PLAYING]
 
     def change_state(self, state_id: StateID):
         if hasattr(self.current_state, 'exit'):
@@ -56,19 +54,15 @@ class Game:
         self.current_state.draw(screen)
         pygame.display.flip()
 
-    async def run(self):
+    def run(self):
         while self.running:
             dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update(dt)
             self.draw(self.screen)
-            await asyncio.sleep(0)
 
         pygame.quit()
 
-async def main():
-    game = Game()
-    await game.run()
-
 if __name__ == '__main__':
-    asyncio.run(main())
+    game = Game()
+    game.run()

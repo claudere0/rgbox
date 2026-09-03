@@ -287,6 +287,14 @@ class PauseState(State):
 class LevelCompleteState(State):
     def enter(self):
         pygame.mixer.music.fadeout(1000)
+        playing_state = self.game.states[StateID.PLAYING]
+        current_level = playing_state.current_level_name
+        
+        self.selected_index = 0
+        if current_level in LEVEL_ORDER and LEVEL_ORDER.index(current_level) + 1 < len(LEVEL_ORDER):
+            self.options = ["NEXT LEVEL", "RETRY", "MENU"]
+        else:
+            self.options = ["RETRY", "MENU"]
 
     def __init__(self, game):
         super().__init__(game)
@@ -327,9 +335,8 @@ class LevelCompleteState(State):
 
     def draw(self, screen):
         screen.fill(YELLOW)
-
         title = self.font_huge.render("LEVEL COMPLETE", True, BLACK)
-        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 96))
+        title_rect = title.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 128))
         screen.blit(title, title_rect)
 
         playing_state = self.game.states[StateID.PLAYING]
@@ -337,10 +344,20 @@ class LevelCompleteState(State):
         seconds = (run_time // 1000) % 60
         minutes = (run_time // 60000) % 60
         millis = (run_time % 1000) // 10
-        
+
         time_text = self.font_small.render(f"YOUR TIME: {minutes:02d}:{seconds:02d}:{millis:02d}", True, RED)
-        time_rect = time_text.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 32))
+        time_rect = time_text.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 64))
         screen.blit(time_text, time_rect)
+
+        # TOTAL BEST TIME
+        total_time = sum(self.game.save_manager.data.get("best_times", {}).values())
+        t_seconds = (total_time // 1000) % 60
+        t_minutes = (total_time // 60000) % 60
+        t_millis = (total_time % 1000) // 10
+        
+        total_text = self.font_small.render(f"TOTAL TIME: {t_minutes:02d}:{t_seconds:02d}:{t_millis:02d}", True, BLACK)
+        total_rect = total_text.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 32))
+        screen.blit(total_text, total_rect)
 
         for i, option in enumerate(self.options):
             if i == self.selected_index:
@@ -351,7 +368,7 @@ class LevelCompleteState(State):
                 text = option
                 
             img = self.font_large.render(text, True, color)
-            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 32 + i * 64))
+            rect = img.get_frect(center=(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 + 48 + i * 64))
             screen.blit(img, rect)
 
 # SETTINGS -> go back to MENU/PAUSE
