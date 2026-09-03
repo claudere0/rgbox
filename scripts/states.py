@@ -470,7 +470,7 @@ class SecretsState(State):
         self.font_title = pygame.font.SysFont('courier', 64, bold=True)
         self.font_name = pygame.font.SysFont('courier', 32)
 
-        self.cameo_names = ["NINJA", "ELUETTE", "RAPPY", "NANAS"]
+        self.cameo_names = ["ELUETTE", "PLANT", "ICEGOLEM", "RAPPY"]
 
         tileset_img = pygame.image.load(join('graphics', 'tilesets', 'demo_tiles.png')).convert_alpha()
         self.cameo_surfaces = []
