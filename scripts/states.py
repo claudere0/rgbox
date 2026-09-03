@@ -104,53 +104,57 @@ class LevelSelectState(State):
                 if self.game.save_manager.is_level_unlocked(level_name):
                     self.game.states[StateID.PLAYING].load_level(level_name)
 
+    def _draw_level_item(self, screen, level_name, index, center_y, spacing, is_unlocked):
+        offset = index - self.selected_index
+        is_selected = (index == self.selected_index)
+
+        if is_selected:
+            if is_unlocked:
+                color = YELLOW
+                display_name = LEVEL_NAMES.get(level_name, level_name.upper())
+            else:
+                color = (255, 255, 255)
+                display_name = "??? (LOCKED)"
+
+            title_img = self.font_main.render(display_name, True, color)
+            title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y))
+            screen.blit(title_img, title_rect)
+
+            if is_unlocked:
+                best_time = self.game.save_manager.data["best_times"].get(level_name, None)
+                if best_time is not None:
+                    seconds = (best_time // 1000) % 60
+                    minutes = (best_time // 60000) % 60
+                    millis = (best_time % 1000) // 10
+                    time_text = f"BEST TIME: {minutes:02d}:{seconds:02d}:{millis:02d}"
+                else:
+                    time_text = "NOT COMPLETED YET"
+                    
+                time_img = self.font_small.render(time_text, True, WHITE)
+                time_rect = time_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + 48))
+                screen.blit(time_img, time_rect)
+            
+        else:
+            if is_unlocked:
+                color = (150, 150, 150)
+                display_name = LEVEL_NAMES.get(level_name, level_name.upper())
+            else:
+                color = (50, 50, 50)
+                display_name = "???"
+                
+            title_img = self.font_small.render(display_name, True, color)
+            title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + (offset * spacing)))
+            screen.blit(title_img, title_rect)
+
     def draw(self, screen):
         screen.fill(BLUE)
 
         center_y = WINDOW_HEIGHT / 2
         spacing = 96
-        
+
         for i, level_name in enumerate(LEVEL_ORDER):
-            offset = i - self.selected_index 
             is_unlocked = self.game.save_manager.is_level_unlocked(level_name)
-
-            if i == self.selected_index:
-                if is_unlocked:
-                    color = YELLOW
-                    display_name = LEVEL_NAMES.get(level_name, level_name.upper())
-                else:
-                    color = (255, 255, 255)
-                    display_name = "??? (LOCKED)"
-
-                title_img = self.font_main.render(display_name, True, color)
-                title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y))
-                screen.blit(title_img, title_rect)
-
-                if is_unlocked:
-                    best_time = self.game.save_manager.data["best_times"].get(level_name, None)
-                    if best_time is not None:
-                        seconds = (best_time // 1000) % 60
-                        minutes = (best_time // 60000) % 60
-                        millis = (best_time % 1000) // 10
-                        time_text = f"BEST TIME: {minutes:02d}:{seconds:02d}:{millis:02d}"
-                    else:
-                        time_text = "NOT COMPLETED YET"
-                        
-                    time_img = self.font_small.render(time_text, True, WHITE)
-                    time_rect = time_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + 48))
-                    screen.blit(time_img, time_rect)
-                
-            else:
-                if is_unlocked:
-                    color = (150, 150, 150)
-                    display_name = LEVEL_NAMES.get(level_name, level_name.upper())
-                else:
-                    color = (50, 50, 50)
-                    display_name = "???"
-                    
-                title_img = self.font_small.render(display_name, True, color)
-                title_rect = title_img.get_frect(center=(WINDOW_WIDTH / 2, center_y + (offset * spacing)))
-                screen.blit(title_img, title_rect)
+            self._draw_level_item(screen, level_name, i, center_y, spacing, is_unlocked)
 
 # PLAYING -> PAUSE (ESCAPE) or LEVEL_COMPLETE
 
@@ -360,45 +364,71 @@ class SettingsState(State):
         self.font_large = pygame.font.SysFont('courier', 48, bold=True)
         self.font_huge = pygame.font.SysFont('courier', 64, bold=True)
 
+    def _handle_volume_change(self, selected, step):
+        if selected == "MUSIC VOL":
+            vol = self.game.save_manager.data["settings"].get("music_volume", 100)
+            new_vol = max(0, min(100, vol + step))
+            self.game.save_manager.data["settings"]["music_volume"] = new_vol
+            self.game.save_manager.save()
+            self.game.audio.update_music_volume()
+
+        elif selected == "SFX VOL":
+            vol = self.game.save_manager.data["settings"].get("sfx_volume", 100)
+            new_vol = max(0, min(100, vol + step))
+            self.game.save_manager.data["settings"]["sfx_volume"] = new_vol
+            self.game.save_manager.save()
+            self.game.audio.play_sfx('jump')
+
+    def _handle_toggle(self, selected):
+        if selected == "FULLSCREEN":
+            current_val = self.game.save_manager.data["settings"]["fullscreen"]
+            self.game.save_manager.data["settings"]["fullscreen"] = not current_val
+            self.game.save_manager.save()
+            pygame.display.toggle_fullscreen()
+
+        elif selected == "MINIMALIST":
+            current_val = self.game.save_manager.data["settings"].get("minimalist", False)
+            self.game.save_manager.data["settings"]["minimalist"] = not current_val
+            self.game.save_manager.save()
+
+        elif selected == "BACK":
+            self.game.change_state(StateID.MENU)
+
     def events(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 self.selected_index = (self.selected_index - 1) % len(self.options)
+
             elif event.key == pygame.K_DOWN:
                 self.selected_index = (self.selected_index + 1) % len(self.options)
 
             elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 selected = self.options[self.selected_index]
                 step = -10 if event.key == pygame.K_LEFT else 10
-                if selected == "MUSIC VOL":
-                    vol = self.game.save_manager.data["settings"].get("music_volume", 100)
-                    new_vol = max(0, min(100, vol + step))
-                    self.game.save_manager.data["settings"]["music_volume"] = new_vol
-                    self.game.save_manager.save()
-                    self.game.audio.update_music_volume()
-
-                elif selected == "SFX VOL":
-                    vol = self.game.save_manager.data["settings"].get("sfx_volume", 100)
-                    new_vol = max(0, min(100, vol + step))
-                    self.game.save_manager.data["settings"]["sfx_volume"] = new_vol
-                    self.game.save_manager.save()
-                    self.game.audio.play_sfx('jump')
+                self._handle_volume_change(selected, step)
 
             elif event.key == pygame.K_RETURN:
                 selected = self.options[self.selected_index]
-                if selected == "FULLSCREEN":
-                    current_val = self.game.save_manager.data["settings"]["fullscreen"]
-                    self.game.save_manager.data["settings"]["fullscreen"] = not current_val
-                    self.game.save_manager.save()
-                    pygame.display.toggle_fullscreen()
+                self._handle_toggle(selected)
 
-                elif selected == "MINIMALIST":
-                    current_val = self.game.save_manager.data["settings"].get("minimalist", False)
-                    self.game.save_manager.data["settings"]["minimalist"] = not current_val
-                    self.game.save_manager.save()
+    def _get_option_text(self, option):
+        if option == "FULLSCREEN":
+            is_on = self.game.save_manager.data["settings"]["fullscreen"]
+            return f"FULLSCREEN [{'ON' if is_on else 'OFF'}]"
 
-                elif selected == "BACK":
-                    self.game.change_state(StateID.MENU)
+        elif option == "MINIMALIST":
+            is_on = self.game.save_manager.data["settings"].get("minimalist", False)
+            return f"MINIMALIST [{'ON' if is_on else 'OFF'}]"
+
+        elif option == "MUSIC VOL":
+            vol = self.game.save_manager.data["settings"].get("music_volume", 100)
+            return f"MUSIC VOL < {vol}% >"
+
+        elif option == "SFX VOL":
+            vol = self.game.save_manager.data["settings"].get("sfx_volume", 100)
+            return f"SFX VOL   < {vol}% >"
+
+        return option
 
     def draw(self, screen):
         screen.fill(BLACK)
@@ -408,23 +438,7 @@ class SettingsState(State):
         screen.blit(title, title_rect)
 
         for i, option in enumerate(self.options):
-            display_text = option
-            if option == "FULLSCREEN":
-                is_on = self.game.save_manager.data["settings"]["fullscreen"]
-                display_text = f"FULLSCREEN [{'ON' if is_on else 'OFF'}]"
-
-            elif option == "MINIMALIST":
-                is_on = self.game.save_manager.data["settings"].get("minimalist", False)
-                display_text = f"MINIMALIST [{'ON' if is_on else 'OFF'}]"
-
-            elif option == "MUSIC VOL":
-                vol = self.game.save_manager.data["settings"].get("music_volume", 100)
-                display_text = f"MUSIC VOL < {vol}% >"
-
-            elif option == "SFX VOL":
-                vol = self.game.save_manager.data["settings"].get("sfx_volume", 100)
-                display_text = f"SFX VOL   < {vol}% >"
-
+            display_text = self._get_option_text(option)
             color = YELLOW if i == self.selected_index else WHITE
             text = f"> {display_text} <" if i == self.selected_index else display_text
             img = self.font_large.render(text, True, color)
