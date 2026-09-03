@@ -188,14 +188,7 @@ class Level:
         self.update_stantions_to_fit_world()
         self.player.change_state(PlayerStateID.IDLE)
 
-    def update(self, dt):
-        self.all_sprites.update(dt)
-        self.update_colors(dt)
-        self.check_hazards()
-
-        if self.player.needs_respawn:
-            self.reset_level()
-
+    def _handle_triggers(self):
         for trigger in self.trigger_sprites:
             if isinstance(trigger, Portal):
                 if self.player.rect.colliderect(trigger.rect.inflate(-16, -16)):
@@ -203,13 +196,11 @@ class Level:
                         self.playing_state.game.audio.play_sfx('portal')
                         self.is_completed = True
 
-
             elif isinstance(trigger, JumpPad):
                 if self.player.rect.colliderect(trigger.rect):
                     if self.player.direction.y >= 0:
                         self.player.direction.y = -trigger.power
                         self.player.change_state(PlayerStateID.JUMP)
-
                         self.player.can_dash = self.player.pigments['R']
                         self.player.can_double_jump = self.player.pigments['G']
 
@@ -219,6 +210,7 @@ class Level:
                         self.playing_state.game.audio.play_sfx('button')
                     trigger.press()
 
+    def _handle_collectibles(self):
         for item in self.collectible_sprites:
             if self.player.rect.colliderect(item.rect):
                 self.playing_state.game.audio.play_sfx('secret')
@@ -226,12 +218,21 @@ class Level:
                     self.playing_state.game.save_manager.unlock_secret(item.secret_id)
 
                 self.playing_state.start_time += item.bonus_ms
-
                 current_time = pygame.time.get_ticks()
                 if current_time - self.playing_state.start_time < 0:
-                    self.playing_state.start_time = current_time # make it 00:00:00 prevent time to be negative or 59:59:99
-
+                    self.playing_state.start_time = current_time 
                 item.kill()
+
+    def update(self, dt):
+        self.all_sprites.update(dt)
+        self.update_colors(dt)
+        self.check_hazards()
+
+        if self.player.needs_respawn:
+            self.reset_level()
+
+        self._handle_triggers()
+        self._handle_collectibles()
 
     def check_hazards(self):
         if self.player.current_state != self.player.states[PlayerStateID.DEATH]:
@@ -245,6 +246,21 @@ class Level:
 
             if self.player.rect.top > self.map_height:
                 self.player.change_state(PlayerStateID.DEATH)
+
+    def _toggle_color(self, station, color_key, enable_player):
+        self.player.audio.play_sfx('color') 
+        self.player.pigments[color_key] = enable_player
+        station.station_colors[color_key] = not enable_player
+
+        self.player.direction.y = -716 # half jump 1012 / square root of 2
+        self.player.scale_x = 0.75
+        self.player.scale_y = 1.25
+        self.player.rect.bottom -= 1
+
+        self.player.change_state(PlayerStateID.JUMP)
+
+        self.player.update_color_and_size()
+        self.update_stantions_to_fit_world()
 
     def update_colors(self, dt):
         just_pressed = pygame.key.get_just_pressed()
@@ -261,35 +277,11 @@ class Level:
                             color_key = 'G'
                         else:
                             color_key = 'B'
+                            
                         if not self.player.pigments[color_key] and station.station_colors[color_key]:
-                            self.player.audio.play_sfx('color') 
-                            self.player.pigments[color_key] = True
-                            station.station_colors[color_key] = False
-
-                            self.player.direction.y = -716 # half jump 1012 / square root of 2
-                            self.player.scale_x = 0.75
-                            self.player.scale_y = 1.25
-                            self.player.rect.bottom -= 1
-
-                            self.player.change_state(PlayerStateID.JUMP)
-
-                            self.player.update_color_and_size()
-                            self.update_stantions_to_fit_world()
-
+                            self._toggle_color(station, color_key, True)
                         elif self.player.pigments[color_key] and not station.station_colors[color_key]:
-                            self.player.audio.play_sfx('color') 
-                            self.player.pigments[color_key] = False
-                            station.station_colors[color_key] = True
-
-                            self.player.direction.y = -716 # half jump 1012 / square root of 2
-                            self.player.scale_x = 0.75
-                            self.player.scale_y = 1.25
-                            self.player.rect.bottom -= 1
-
-                            self.player.change_state(PlayerStateID.JUMP)
-
-                            self.player.update_color_and_size()
-                            self.update_stantions_to_fit_world()
+                            self._toggle_color(station, color_key, False)
 
     def update_stantions_to_fit_world(self):
         has_colors = any(self.player.pigments.values())
@@ -297,18 +289,9 @@ class Level:
             if isinstance(st, ColorStation):
                 st.draw_station(has_colors)
 
-    def draw(self, screen):
-        has_colors = any(self.player.pigments.values())
-        if has_colors:
-            bg_color = BLACK
-            target_texture = self.white_tile_image
-            spike_texture = self.white_spike_image
-        else:
-            bg_color = WHITE
-            target_texture = self.black_tile_image
-            spike_texture = self.black_spike_image
-
-        screen.fill(bg_color)
+    def _draw_textures(self, has_colors):
+        target_texture = self.white_tile_image if has_colors else self.black_tile_image
+        spike_texture = self.white_spike_image if has_colors else self.black_spike_image
 
         for tile in self.terrain_sprites:
             tile.image = target_texture
@@ -326,7 +309,6 @@ class Level:
                     sprite.image = self.portal_vert_white if has_colors else self.portal_vert_black
                 else:
                     sprite.image = self.portal_horiz_white if has_colors else self.portal_horiz_black
-
             elif isinstance(sprite, JumpPad):
                 sprite.image = self.jumppad_white if has_colors else self.jumppad_black
 
@@ -338,4 +320,10 @@ class Level:
             if isinstance(sprite, TextSprite):
                 sprite.image = sprite.white_surf if has_colors else sprite.black_surf
 
+    def draw(self, screen):
+        has_colors = any(self.player.pigments.values())
+        bg_color = BLACK if has_colors else WHITE
+        screen.fill(bg_color)
+
+        self._draw_textures(has_colors)
         self.all_sprites.draw(self.player.rect.center)

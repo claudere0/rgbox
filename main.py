@@ -1,3 +1,4 @@
+import asyncio
 from scripts.settings import *
 from scripts.states import *
 from scripts.save_manager import SaveManager
@@ -55,15 +56,19 @@ class Game:
         self.current_state.draw(screen)
         pygame.display.flip()
 
-    def run(self):
+    async def run(self):
         while self.running:
             dt = self.clock.tick(FPS) / 1000
             self.events()
             self.update(dt)
             self.draw(self.screen)
+            await asyncio.sleep(0)
 
         pygame.quit()
 
-if __name__ == '__main__':
+async def main():
     game = Game()
-    game.run()
+    await game.run()
+
+if __name__ == '__main__':
+    asyncio.run(main())
