@@ -117,7 +117,7 @@ class LevelSelectState(State):
             if i == self.selected_index:
                 if is_unlocked:
                     color = YELLOW
-                    display_name = level_name.upper()
+                    display_name = LEVEL_NAMES.get(level_name, level_name.upper())
                 else:
                     color = (255, 255, 255)
                     display_name = "??? (LOCKED)"
@@ -142,10 +142,10 @@ class LevelSelectState(State):
                 
             else:
                 if is_unlocked:
-                    color = (255, 255, 255)
-                    display_name = level_name.upper()
+                    color = (150, 150, 150)
+                    display_name = LEVEL_NAMES.get(level_name, level_name.upper())
                 else:
-                    color = (0, 0, 0) # Темно-серый
+                    color = (50, 50, 50)
                     display_name = "???"
                     
                 title_img = self.font_small.render(display_name, True, color)

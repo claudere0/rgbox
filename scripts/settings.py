@@ -26,3 +26,12 @@ LEVEL_ORDER = [
     "level_two",
     "level_three"
 ]
+
+LEVEL_NAMES = {
+    'tutorial_zero': '01: AWAKENING',
+    'tutorial_one': '02: THE MIX',
+    'level_zero': '03: FREEFALL',
+    'level_one': '04: NO TIME TO STOP',
+    'level_two': '05: JUMP JUMP DASH',
+    'level_three': '06: THE LABIRINTH'
+}
