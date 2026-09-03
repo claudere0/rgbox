@@ -299,42 +299,40 @@ class DeathState(PlayerState):
             self.player.needs_respawn = True
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, collision_group_check, audio, *groups):
-        super().__init__(*groups)
-        self.audio = audio
+    def _init_graphics(self, surf, pos):
         self.base_image = pygame.Surface(surf)
         self.base_image.fill(WHITE)
         self.image = self.base_image.copy()
 
-        self.rect = self.image.get_frect(topleft = pos)
+        self.rect = self.image.get_frect(topleft=pos)
         self.old_rect = self.rect.copy()
         self.display_rect = self.rect.copy()
         self.z = 10
-
         self.scale_x = 1.0
         self.scale_y = 1.0
 
-        self.direction = Vector2(0,0)
+    def _init_physics(self):
+        self.direction = Vector2(0, 0)
         self.speed = 300
-
         self.gravity = 2560 # earth 640px/s^2 but in games it should be bigger from 2-5 times
         self.jump = False
         self.jump_height = 1012
 
         self.fall_gravity_modifier = 2
         self.slide_gravity_modifier = 0.125
-        self.max_fall_speed = 1600 # I wanted it to be 2560 means 48 px per second but it can cause a bugs cause my little paltforms has thickness of 32 i need less than 32 * 60 means less than 1920 (3/4 of 2560) and I choose 1600 (5/8 of 2560)
+        self.max_fall_speed = 1600 # To avoid bugs passing through platforms
 
+        self.on_surface = {'floor': False, 'left': False, 'right': False}
+        self.platform = None
+
+    def _init_mechanics(self):
         self.can_double_jump = False
         self.can_dash = True
         self.facing = 1
         self.is_dashing = False
+        self.pigments = {'R': False, 'G': False, 'B': False}
+        self.needs_respawn = False
 
-        self.collision_sprites = collision_group_check
-        self.on_surface = {'floor': False, 'left': False, 'right': False}
-        self.platform = None
-
-        # self.display_surface = pygame.display.get_surface()
         self.timers = {
             'wall_jump': Timer(500),
             'wall_jump_block': Timer(250),
@@ -344,9 +342,7 @@ class Player(pygame.sprite.Sprite):
             'death': Timer(500),
         }
 
-        self.pigments = {'R': False, 'G': False, 'B': False}
-        self.needs_respawn = False
-
+    def _init_states(self):
         self.states = {
             PlayerStateID.IDLE: IdleState(self),
             PlayerStateID.RUN: RunState(self),
@@ -354,11 +350,20 @@ class Player(pygame.sprite.Sprite):
             PlayerStateID.JUMP: JumpState(self),
             PlayerStateID.WALL_SLIDE: WallSlideState(self),
             PlayerStateID.DASH: DashState(self),
-            PlayerStateID.DEATH: DeathState(self), 
+            PlayerStateID.DEATH: DeathState(self),
         }
-
         self.current_state = self.states[PlayerStateID.IDLE]
         self.update_color_and_size()
+
+    def __init__(self, pos, surf, collision_group_check, audio, *groups):
+        super().__init__(*groups)
+        self.audio = audio
+        self.collision_sprites = collision_group_check
+        
+        self._init_graphics(surf, pos)
+        self._init_physics()
+        self._init_mechanics()
+        self._init_states()
 
     def change_state(self, new_state_id):
         if self.current_state != self.states[new_state_id]:
