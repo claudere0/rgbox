@@ -32,7 +32,11 @@ class Game:
         # self.current_state = self.states[StateID.PLAYING]
 
     def change_state(self, state_id: StateID):
+        if hasattr(self.current_state, 'exit'):
+            self.current_state.exit()
         self.current_state = self.states[state_id]
+        if hasattr(self.current_state, 'enter'):
+            self.current_state.enter()
 
     def events(self):
         for event in pygame.event.get():

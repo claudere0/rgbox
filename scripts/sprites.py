@@ -8,7 +8,7 @@ class Sprite(pygame.sprite.Sprite):
         # self.image.fill(WHITE)
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
-
+        self.z = 1
 class MovingSprite(Sprite):
     def __init__(self, size,  start_pos, end_pos, move_dir, speed, *groups):
         surf = pygame.Surface(size)
@@ -76,7 +76,6 @@ class Spike(Sprite):
         super().__init__(pos, surf, *groups)
         self.rect.bottom = pos[1] + TILE_SIZE
         self.old_rect = self.rect.copy()
-
 class ColorDoor(Sprite):
     COLOR_MAP = {
         'K': {'R': False, 'G': False, 'B': False}, # Black
@@ -203,7 +202,6 @@ class Laser(Sprite):
 
     def update(self, dt):
         self.old_rect = self.rect.copy()
-
         self.image.set_alpha(255 if self.active else 63)
 
         if self.speed > 0:

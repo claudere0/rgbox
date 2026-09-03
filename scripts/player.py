@@ -309,6 +309,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft = pos)
         self.old_rect = self.rect.copy()
         self.display_rect = self.rect.copy()
+        self.z = 10
 
         self.scale_x = 1.0
         self.scale_y = 1.0

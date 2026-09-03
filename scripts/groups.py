@@ -9,7 +9,7 @@ class AllSprites(pygame.sprite.Group):
     def draw(self, target_pos):
         self.offset.x = -(target_pos[0] - WINDOW_WIDTH / 2)
         self.offset.y = -(target_pos[1] - WINDOW_HEIGHT / 2)
-        for sprite in self:
+        for sprite in sorted(self.sprites(), key=lambda sprite: getattr(sprite, 'z', 1)):
             if hasattr(sprite, 'display_rect'):
                 offset_pos = sprite.display_rect.topleft + self.offset
             else:

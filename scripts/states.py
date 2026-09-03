@@ -281,6 +281,9 @@ class PauseState(State):
 # LEVEL_COMPLETE -> play next level PLAYING(retry or load next level) or quit to MENU
 
 class LevelCompleteState(State):
+    def enter(self):
+        pygame.mixer.music.fadeout(1000)
+
     def __init__(self, game):
         super().__init__(game)
         self.options = ["NEXT LEVEL", "RETRY", "MENU"]
