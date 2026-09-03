@@ -27,11 +27,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 0.1411,
-            "selectedLayer": 2,
+            "scale": 0.2533,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 2877.3919206236706,
-                "y": 3841.247342310418
+                "x": 4587.44571654165,
+                "y": 1985.7876036320565
             }
         },
         "level_two.tmx": {
@@ -63,8 +63,8 @@
             "scale": 0.4058,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 3839.3297190734347,
-                "y": 1150.813208477082
+                "x": 6885.165105963529,
+                "y": 1545.0961064563826
             }
         },
         "tutorial_zero.tmx": {

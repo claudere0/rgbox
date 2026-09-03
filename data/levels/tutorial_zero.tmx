@@ -260,10 +260,11 @@
  <objectgroup id="4" name="objects">
   <object id="1" name="box" x="364" y="256" width="40" height="40"/>
   <object id="2" name="portal" x="2752" y="2496" width="128" height="64"/>
-  <object id="6" name="text" x="224" y="256" width="320" height="40">
+  <object id="6" name="text" x="224" y="192" width="320" height="40">
    <properties>
     <property name="font_size" type="int" value="36"/>
     <property name="text">Left/Right arrows 
+or 'A' and 'D'
 to move and 
 Space to Jump.</property>
    </properties>
@@ -275,7 +276,7 @@ Space to Jump.</property>
     <property name="has_red" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="8" name="text" x="1408" y="192" width="240" height="40">
+  <object id="8" name="text" x="1408" y="256" width="240" height="40">
    <properties>
     <property name="font_size" type="int" value="36"/>
     <property name="text">Press 'E' to 

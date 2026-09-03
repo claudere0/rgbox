@@ -28,8 +28,8 @@ class PlayerState:
 class IdleState(PlayerState):
     def handle_input(self, keys, just_pressed):
         input_vector = Vector2(0,0)
-        if keys[pygame.K_RIGHT]: input_vector.x += 1
-        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]): input_vector.x += 1
+        if (keys[pygame.K_LEFT] or keys[pygame.K_a]): input_vector.x -= 1
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
         if just_pressed[pygame.K_SPACE] and self.player.on_surface['floor']:
@@ -64,8 +64,8 @@ class IdleState(PlayerState):
 class RunState(PlayerState):
     def handle_input(self, keys, just_pressed):
         input_vector = Vector2(0,0)
-        if keys[pygame.K_RIGHT]: input_vector.x += 1
-        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]): input_vector.x += 1
+        if (keys[pygame.K_LEFT] or keys[pygame.K_a]): input_vector.x -= 1
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
         if just_pressed[pygame.K_SPACE] and self.player.on_surface['floor']:
@@ -104,8 +104,8 @@ class FallState(PlayerState):
     def handle_input(self, keys, just_pressed):
         if not self.player.timers['wall_jump_block'].active:
             input_vector = Vector2(0,0)
-            if keys[pygame.K_RIGHT]: input_vector.x += 1
-            if keys[pygame.K_LEFT]: input_vector.x -= 1
+            if (keys[pygame.K_RIGHT] or keys[pygame.K_d]): input_vector.x += 1
+            if (keys[pygame.K_LEFT] or keys[pygame.K_a]): input_vector.x -= 1
             self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
         if just_pressed[pygame.K_SPACE]:
@@ -157,8 +157,8 @@ class JumpState(PlayerState):
     def handle_input(self, keys, just_pressed):
         if not self.player.timers['wall_jump_block'].active:
             input_vector = Vector2(0,0)
-            if keys[pygame.K_RIGHT]: input_vector.x += 1
-            if keys[pygame.K_LEFT]: input_vector.x -= 1
+            if (keys[pygame.K_RIGHT] or keys[pygame.K_d]): input_vector.x += 1
+            if (keys[pygame.K_LEFT] or keys[pygame.K_a]): input_vector.x -= 1
             self.player.direction.x = input_vector.normalize().x if input_vector else 0
 
         if just_pressed[pygame.K_SPACE] and self.player.can_double_jump:
@@ -195,8 +195,8 @@ class JumpState(PlayerState):
 class WallSlideState(PlayerState):
     def handle_input(self, keys, just_pressed):
         input_vector = Vector2(0,0)
-        if keys[pygame.K_RIGHT]: input_vector.x += 1
-        if keys[pygame.K_LEFT]: input_vector.x -= 1
+        if (keys[pygame.K_RIGHT] or keys[pygame.K_d]): input_vector.x += 1
+        if (keys[pygame.K_LEFT] or keys[pygame.K_a]): input_vector.x -= 1
         self.player.direction.x = input_vector.normalize().x if input_vector else 0
         if just_pressed[pygame.K_SPACE]:
             self.player.jump = True

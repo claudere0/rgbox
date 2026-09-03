@@ -42,10 +42,10 @@ class MenuState(State):
 
     def events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key in (pygame.K_UP, pygame.K_w):
                 self.selected_index = (self.selected_index - 1) % len(self.options)
 
-            elif event.key == pygame.K_DOWN:
+            elif event.key in (pygame.K_DOWN, pygame.K_s):
                 self.selected_index = (self.selected_index + 1) % len(self.options)
 
             elif event.key == pygame.K_RETURN:
@@ -91,11 +91,11 @@ class LevelSelectState(State):
             if event.key == pygame.K_ESCAPE:
                 self.game.change_state(StateID.MENU)
 
-            elif event.key == pygame.K_UP:
+            elif event.key in (pygame.K_UP, pygame.K_w):
                 if self.selected_index > 0:
                     self.selected_index -= 1
 
-            elif event.key == pygame.K_DOWN:
+            elif event.key in (pygame.K_DOWN, pygame.K_s):
                 if self.selected_index < len(LEVEL_ORDER) - 1:
                     self.selected_index += 1
 
@@ -242,10 +242,10 @@ class PauseState(State):
                 self.game.states[StateID.PLAYING].resume_timer()
                 self.game.change_state(StateID.PLAYING)
 
-            elif event.key == pygame.K_UP:
+            elif event.key in (pygame.K_UP, pygame.K_w):
                 self.selected_index = (self.selected_index - 1) % len(self.options)
 
-            elif event.key == pygame.K_DOWN:
+            elif event.key in (pygame.K_DOWN, pygame.K_s):
                 self.selected_index = (self.selected_index + 1) % len(self.options)
 
             elif event.key == pygame.K_RETURN:
@@ -298,10 +298,10 @@ class LevelCompleteState(State):
 
     def events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key in (pygame.K_UP, pygame.K_w):
                 self.selected_index = (self.selected_index - 1) % len(self.options)
 
-            elif event.key == pygame.K_DOWN:
+            elif event.key in (pygame.K_DOWN, pygame.K_s):
                 self.selected_index = (self.selected_index + 1) % len(self.options)
 
             elif event.key == pygame.K_RETURN:
@@ -396,15 +396,15 @@ class SettingsState(State):
 
     def events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key in (pygame.K_UP, pygame.K_w):
                 self.selected_index = (self.selected_index - 1) % len(self.options)
 
-            elif event.key == pygame.K_DOWN:
+            elif event.key in (pygame.K_DOWN, pygame.K_s):
                 self.selected_index = (self.selected_index + 1) % len(self.options)
 
-            elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+            elif event.key in (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_a, pygame.K_d):
                 selected = self.options[self.selected_index]
-                step = -10 if event.key == pygame.K_LEFT else 10
+                step = -10 if event.key in (pygame.K_LEFT, pygame.K_a) else 10
                 self._handle_volume_change(selected, step)
 
             elif event.key == pygame.K_RETURN:

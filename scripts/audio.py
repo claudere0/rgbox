@@ -21,7 +21,7 @@ class AudioManager:
         sfx_files = {
             'jump': 'jump.mp3',
             'dash': 'dash.mp3',
-            'death': 'death_arcade.wav', #can change to death_bubble.mp3
+            'death': 'death_arcade.wav', # can change to death_bubble.mp3
             'color': 'color_change.mp3',
             'secret': 'secret.wav',
             'portal': 'portal.wav'
