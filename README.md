@@ -3,6 +3,8 @@
 **RGBox** is a precision puzzle-platformer built entirely from scratch using Python and Pygame-CE.
 The game is built around a custom 2D physics engine and a robust Finite State Machine, focusing on additive RGB color mixing and world-inversion mechanics.
 
+<video src="https://github.com/user-attachments/assets/b9de4696-bd0d-4287-bc25-af6c1e7c11dd" autoplay loop muted playsinline width="100%"></video>
+
 ## 🌟 The Core Concept
 You control a cube that absorbs light pigments from "Color Stations".
 *   **The Inversion:** If the cube has no colors (Black), the world's background is White and the platforms are Black. As soon as the cube absorbs any color, the world instantly inverts (Background turns Black, platforms turn White), making the cube glow in the dark.
