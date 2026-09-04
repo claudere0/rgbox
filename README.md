@@ -5,6 +5,9 @@ The game is built around a custom 2D physics engine and a robust Finite State Ma
 
 <video src="https://github.com/user-attachments/assets/b9de4696-bd0d-4287-bc25-af6c1e7c11dd" autoplay loop muted playsinline width="100%"></video>
 
+* 🪟 [Download for Windows](https://github.com/claudere0/rgbox/releases/download/v1.0.0/rgbox_windows.zip)
+* 🪟 [Download for Mac (Apple Silicon)]]([сюда_вставьте_скопированную_ссылку_на_windows_zip](https://github.com/claudere0/rgbox/releases/download/v1.0.0/rgbox_mac.zip))
+
 ## 🌟 The Core Concept
 You control a cube that absorbs light pigments from "Color Stations".
 *   **The Inversion:** If the cube has no colors (Black), the world's background is White and the platforms are Black. As soon as the cube absorbs any color, the world instantly inverts (Background turns Black, platforms turn White), making the cube glow in the dark.
