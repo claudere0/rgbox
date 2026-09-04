@@ -244,8 +244,10 @@ class TimeBonusSprite(Collectible):
         super().__init__(pos, self.black_surf, *groups)
 
 class ColorStation(Sprite):
+    _tileset = None
+
     def __init__(self, pos, size, properties, *groups):
-        surf = pygame.Surface(size)
+        surf = pygame.Surface(size, pygame.SRCALPHA)
         super().__init__(pos, surf, *groups)
 
         self.station_colors = {
@@ -254,17 +256,31 @@ class ColorStation(Sprite):
             'B': properties.get('has_blue', False)
         }
 
-    def draw_station(self, player_has_colors):
-        empty_color = WHITE if player_has_colors else BLACK
-        self.image.fill(empty_color)
-        slot_width = self.rect.width / 3 
+        if ColorStation._tileset is None:
+            from os.path import join
+            ColorStation._tileset = pygame.image.load(join('graphics', 'tilesets', 'demo_tiles.png')).convert_alpha()
 
-        if self.station_colors['R']:
-            pygame.draw.rect(self.image, (255, 0, 0), (0, 0, slot_width, self.rect.height))
-        if self.station_colors['G']:
-            pygame.draw.rect(self.image, (0, 255, 0), (slot_width, 0, slot_width, self.rect.height))
-        if self.station_colors['B']:
-            pygame.draw.rect(self.image, (0, 0, 255), (slot_width * 2, 0, slot_width, self.rect.height))
+        self.textures = {
+            'empty_R':  ColorStation._tileset.subsurface(pygame.Rect(64,  320, 64, 32)),
+            'empty_G':  ColorStation._tileset.subsurface(pygame.Rect(128, 320, 64, 32)),
+            'empty_B':  ColorStation._tileset.subsurface(pygame.Rect(192, 320, 64, 32)),
+            
+            'filled_R': ColorStation._tileset.subsurface(pygame.Rect(64,  352, 64, 32)),
+            'filled_G': ColorStation._tileset.subsurface(pygame.Rect(128, 352, 64, 32)),
+            'filled_B': ColorStation._tileset.subsurface(pygame.Rect(192, 352, 64, 32))
+        }
+
+    def draw_station(self, player_has_colors):
+        self.image.fill((0, 0, 0, 0))
+
+        img_r = self.textures['filled_R'] if self.station_colors['R'] else self.textures['empty_R']
+        self.image.blit(img_r, (0, 0))
+
+        img_g = self.textures['filled_G'] if self.station_colors['G'] else self.textures['empty_G']
+        self.image.blit(img_g, (64, 0))
+
+        img_b = self.textures['filled_B'] if self.station_colors['B'] else self.textures['empty_B']
+        self.image.blit(img_b, (128, 0))
 
 class ColorDoor(Sprite):
     COLOR_MAP = {
