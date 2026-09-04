@@ -1,19 +1,89 @@
 {
-    "activeFile": "",
+    "activeFile": "level_three.tmx",
     "expandedProjectPaths": [
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "demo_tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "level_one.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.2193,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 14610.123119015047,
+                "y": 1427.2685818513453
+            }
+        },
+        "level_three.tmx": {
+            "scale": 0.1073,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 2898.4156570363466,
+                "y": 3504.193849021435
+            }
+        },
+        "level_two.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.2723,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 3859.7135512302607,
+                "y": 1300.0367242012485
+            }
+        },
+        "level_zero.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.1811,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 1402.540033130867,
+                "y": 2020.982882385422
+            }
+        },
+        "tutorial_one.tmx": {
+            "scale": 0.9873,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 4482.933252304265,
+                "y": 1322.7995543401196
+            }
+        },
+        "tutorial_zero.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 0.1396,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 3932.664756446991,
+                "y": 1776.5042979942696
+            }
+        }
     },
     "openFiles": [
+        "tutorial_zero.tmx",
+        "tutorial_one.tmx",
+        "level_zero.tmx",
+        "level_one.tmx",
+        "level_two.tmx",
+        "level_three.tmx"
     ],
     "project": "",
     "recentFiles": [
         "tutorial_zero.tmx",
         "tutorial_one.tmx",
         "level_zero.tmx",
-        "level_three.tmx",
-        "level_two.tmx",
         "level_one.tmx",
+        "level_two.tmx",
+        "level_three.tmx",
         "demo_tiles.tsx"
     ]
 }

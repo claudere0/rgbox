@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="15" height="96" tilewidth="64" tileheight="64" infinite="0" nextlayerid="6" nextobjectid="54">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="15" height="96" tilewidth="64" tileheight="64" infinite="0" nextlayerid="6" nextobjectid="57">
  <tileset firstgid="1" source="demo_tiles.tsx"/>
  <layer id="1" name="background" width="15" height="96">
   <data encoding="csv">
@@ -121,7 +121,7 @@
 1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,
 1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,
 1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,
-1,1,1,1,0,0,0,0,0,0,1,0,0,0,1,
+1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -221,7 +221,6 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -236,12 +235,13 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,3,0,0,0,3,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,
+0,0,0,0,0,0,0,0,2,0,0,0,2,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,
-0,0,0,0,0,0,0,0,0,3,0,3,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,
+0,0,0,0,0,0,0,0,0,2,0,2,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -419,7 +419,7 @@
   </object>
   <object id="11" name="falling_platform" x="512" y="384" width="128" height="32"/>
   <object id="12" name="falling_platform" x="704" y="384" width="128" height="32"/>
-  <object id="13" name="laser" x="384" y="576" width="256" height="16">
+  <object id="13" name="laser" x="448" y="576" width="192" height="16">
    <properties>
     <property name="move_axis" value="y"/>
     <property name="move_dist" type="int" value="304"/>
@@ -438,7 +438,7 @@
     <property name="speed" type="int" value="256"/>
    </properties>
   </object>
-  <object id="16" name="laser" x="64" y="832" width="256" height="16">
+  <object id="16" name="laser" x="64" y="832" width="192" height="16">
    <properties>
     <property name="move_axis" value="y"/>
     <property name="move_dist" type="int" value="304"/>
@@ -448,15 +448,15 @@
   <object id="17" name="color_station" x="128" y="2080" width="192" height="32">
    <properties>
     <property name="has_blue" type="bool" value="false"/>
-    <property name="has_green" type="bool" value="true"/>
+    <property name="has_green" type="bool" value="false"/>
     <property name="has_red" type="bool" value="false"/>
    </properties>
   </object>
   <object id="21" name="color_station" x="512" y="3552" width="192" height="32">
    <properties>
     <property name="has_blue" type="bool" value="false"/>
-    <property name="has_green" type="bool" value="false"/>
-    <property name="has_red" type="bool" value="true"/>
+    <property name="has_green" type="bool" value="true"/>
+    <property name="has_red" type="bool" value="false"/>
    </properties>
   </object>
   <object id="22" name="color_door" gid="37" x="64" y="3648" width="64" height="64">
@@ -489,26 +489,11 @@
     <property name="target_id" type="int" value="13"/>
    </properties>
   </object>
-  <object id="28" name="color_door" gid="35" x="576.005" y="2176" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="29" name="color_door" gid="35" x="640.005" y="2176" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="30" name="color_door" gid="35" x="704.005" y="2176" width="64" height="64">
-   <properties>
-    <property name="color" value="G"/>
-   </properties>
-  </object>
-  <object id="32" name="laser" x="64" y="2432" width="16" height="64">
+  <object id="32" name="laser" x="64" y="2448" width="256" height="32">
    <properties>
     <property name="move_axis" value="x"/>
-    <property name="move_dist" type="int" value="496"/>
-    <property name="speed" type="int" value="256"/>
+    <property name="move_dist" type="int" value="256"/>
+    <property name="speed" type="int" value="160"/>
    </properties>
   </object>
   <object id="34" name="button" x="464" y="2080" width="32" height="32">
@@ -521,53 +506,32 @@
     <property name="target_id" type="int" value="36"/>
    </properties>
   </object>
-  <object id="36" name="laser" x="64" y="2944" width="16" height="64">
+  <object id="36" name="laser" x="64" y="2960" width="256" height="32">
    <properties>
     <property name="move_axis" value="x"/>
-    <property name="move_dist" type="int" value="496"/>
-    <property name="speed" type="int" value="320"/>
+    <property name="move_dist" type="int" value="256"/>
+    <property name="speed" type="int" value="192"/>
    </properties>
   </object>
   <object id="38" name="laser" x="640" y="4032" width="16" height="256">
    <properties>
     <property name="move_axis" value="x"/>
     <property name="move_dist" type="int" value="240"/>
-    <property name="speed" type="int" value="192"/>
-   </properties>
-  </object>
-  <object id="39" name="laser" x="64" y="4416" width="16" height="256">
-   <properties>
-    <property name="move_axis" value="x"/>
-    <property name="move_dist" type="int" value="240"/>
-    <property name="speed" type="int" value="256"/>
+    <property name="speed" type="int" value="224"/>
    </properties>
   </object>
   <object id="40" name="laser" x="640" y="4800" width="16" height="256">
    <properties>
     <property name="move_axis" value="x"/>
     <property name="move_dist" type="int" value="240"/>
-    <property name="speed" type="int" value="320"/>
-   </properties>
-  </object>
-  <object id="41" name="laser" x="64" y="5184" width="16" height="256">
-   <properties>
-    <property name="move_axis" value="x"/>
-    <property name="move_dist" type="int" value="240"/>
-    <property name="speed" type="int" value="384"/>
+    <property name="speed" type="int" value="256"/>
    </properties>
   </object>
   <object id="42" name="laser" x="320" y="3968" width="320" height="16">
    <properties>
     <property name="move_axis" value="y"/>
     <property name="move_dist" type="int" value="304"/>
-    <property name="speed" type="int" value="256"/>
-   </properties>
-  </object>
-  <object id="43" name="laser" x="320" y="4352" width="320" height="16">
-   <properties>
-    <property name="move_axis" value="y"/>
-    <property name="move_dist" type="int" value="304"/>
-    <property name="speed" type="int" value="256"/>
+    <property name="speed" type="int" value="224"/>
    </properties>
   </object>
   <object id="44" name="laser" x="320" y="4736" width="320" height="16">
@@ -577,11 +541,11 @@
     <property name="speed" type="int" value="256"/>
    </properties>
   </object>
-  <object id="45" name="laser" x="320" y="5120" width="320" height="16">
+  <object id="45" name="laser" x="320" y="5440" width="320" height="16">
    <properties>
     <property name="move_axis" value="y"/>
     <property name="move_dist" type="int" value="304"/>
-    <property name="speed" type="int" value="256"/>
+    <property name="speed" type="int" value="320"/>
    </properties>
   </object>
   <object id="46" name="button" x="400" y="3552" width="32" height="32">
@@ -594,16 +558,6 @@
     <property name="target_id" type="int" value="38"/>
    </properties>
   </object>
-  <object id="48" name="button" x="656" y="4256" width="32" height="32">
-   <properties>
-    <property name="target_id" type="int" value="39"/>
-   </properties>
-  </object>
-  <object id="49" name="button" x="848" y="4256" width="32" height="32">
-   <properties>
-    <property name="target_id" type="int" value="43"/>
-   </properties>
-  </object>
   <object id="50" name="button" x="79.9985" y="4640" width="32" height="32">
    <properties>
     <property name="target_id" type="int" value="40"/>
@@ -614,14 +568,24 @@
     <property name="target_id" type="int" value="44"/>
    </properties>
   </object>
-  <object id="52" name="button" x="656" y="5024" width="32" height="32">
+  <object id="52" name="button" x="256" y="5408" width="32" height="32">
    <properties>
     <property name="target_id" type="int" value="45"/>
    </properties>
   </object>
-  <object id="53" name="button" x="848.001" y="5024" width="32" height="32">
+  <object id="54" name="color_door" gid="34" x="576" y="2176" width="64" height="64">
    <properties>
-    <property name="target_id" type="int" value="41"/>
+    <property name="color" value="R"/>
+   </properties>
+  </object>
+  <object id="55" name="color_door" gid="34" x="640" y="2176" width="64" height="64">
+   <properties>
+    <property name="color" value="R"/>
+   </properties>
+  </object>
+  <object id="56" name="color_door" gid="34" x="704" y="2176" width="64" height="64">
+   <properties>
+    <property name="color" value="R"/>
    </properties>
   </object>
  </objectgroup>

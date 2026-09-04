@@ -18,6 +18,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        try:
+            icon_img = pygame.image.load(join('graphics', 'rgbox_icon.png')).convert_alpha()
+            pygame.display.set_icon(icon_img)
+        except FileNotFoundError:
+            pass
+
         self.states = {
             StateID.MENU: MenuState(self),
             StateID.LEVEL_SELECT: LevelSelectState(self),

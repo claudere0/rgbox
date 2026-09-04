@@ -1935,6 +1935,13 @@ class Game:
 
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), flags)
         pygame.display.set_caption('rgbox')
+
+        try:
+            icon_img = pygame.image.load(join('graphics', 'rgbox_icon.png')).convert_alpha()
+            pygame.display.set_icon(icon_img)
+        except FileNotFoundError:
+            pass
+
         self.clock = pygame.time.Clock()
         self.running = True
 
@@ -1949,7 +1956,6 @@ class Game:
         }
 
         self.current_state = self.states[StateID.MENU]
-        # self.current_state = self.states[StateID.PLAYING]
 
     def change_state(self, state_id: StateID):
         if hasattr(self.current_state, 'exit'):
