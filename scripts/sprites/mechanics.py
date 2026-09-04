@@ -64,7 +64,6 @@ class JumpPad(Sprite):
 
         self.rect.bottom = pos[1] + size[1]
 
-
 class FallingPlatform(Sprite):
     def __init__(self, pos, size, player, collision_sprites, *groups):
         surf = pygame.Surface(size, pygame.SRCALPHA)
@@ -72,16 +71,25 @@ class FallingPlatform(Sprite):
 
         self.player = player
         self.collision_group = collision_sprites
-
         self.collision_group.add(self)
 
         self.base_pos = pos
         self.shake_amount = 4
-
         self.state = 'IDLE'
 
+        base_crumble_time = 500
+
+        if size[0] >= 256:
+            crumble_time = int(base_crumble_time * 2)
+
+        elif size[0] >= 192:
+            crumble_time = int(base_crumble_time * 1.5)
+
+        else:
+            crumble_time = base_crumble_time
+
         self.timers = {
-            'crumble': Timer(500),
+            'crumble': Timer(crumble_time),
             'respawn': Timer(2000)
         }
 
@@ -94,14 +102,14 @@ class FallingPlatform(Sprite):
 
     def update(self, dt):
         self.old_rect = self.rect.copy()
-        
         for timer in self.timers.values():
             timer.update()
 
         if self.state == 'IDLE':
-            if self.rect.colliderect(self.player.rect.inflate(16, 16)):
-                self.state = 'SHAKING'
-                self.timers['crumble'].activate()
+            if self.rect.inflate(0, 16).colliderect(self.player.rect):
+                if self.player.rect.bottom <= self.rect.top + 8:
+                    self.state = 'SHAKING'
+                    self.timers['crumble'].activate()
 
         elif self.state == 'SHAKING':
             if not self.timers['crumble'].active:
@@ -120,7 +128,6 @@ class FallingPlatform(Sprite):
             return
 
         self.image.set_alpha(255)
-
         base_color = pygame.Color(255, 255, 255) if has_colors else pygame.Color(0, 0, 0)
         
         if self.state == 'SHAKING':
@@ -133,10 +140,10 @@ class FallingPlatform(Sprite):
 
             offset = math.sin(pygame.time.get_ticks() * 0.05) * self.shake_amount
             self.rect.x = self.base_pos[0] + offset
+
         else:
             self.image.fill(base_color)
             self.rect.x = self.base_pos[0]
-
 
 class TimerButton(Sprite):
     def __init__(self, pos, size, target_id, timer_ms, *groups):
